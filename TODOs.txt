@@ -1,0 +1,5 @@
+- Build config file parsing
+- Argument parsing & pretty-print tasks
+- Run tasks using envy, without worrying about Docker
+- Management of container & image IDs using a .envy file
+- envy up should dump you in the container
