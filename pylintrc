@@ -63,6 +63,7 @@ confidence=
 disable=print-statement,
         parameter-unpacking,
         unpacking-in-except,
+        too-few-public-methods,
         old-raise-syntax,
         backtick,
         long-suffix,
@@ -74,6 +75,7 @@ disable=print-statement,
         bad-inline-option,
         locally-disabled,
         file-ignored,
+        fixme,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
@@ -103,6 +105,7 @@ disable=print-statement,
         metaclass-assignment,
         indexing-exception,
         raising-string,
+        no-self-use,
         reload-builtin,
         oct-method,
         hex-method,
@@ -138,7 +141,8 @@ disable=print-statement,
         xreadlines-attribute,
         deprecated-sys-function,
         exception-escape,
-        comprehension-escape
+        comprehension-escape,
+        missing-docstring
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -286,7 +290,7 @@ no-docstring-rgx=^_
 property-classes=abc.abstractproperty
 
 # Naming style matching correct variable names.
-variable-naming-style=snake_case
+variable-naming-style=any
 
 # Regular expression matching correct variable names. Overrides variable-
 # naming-style.
