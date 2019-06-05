@@ -1,8 +1,10 @@
 import logging
+from docker.types import Mount
+
 import lib.config.placeholder as appConfig
 from lib.docker_helpers.image_finder import ImageFinder
 
-from docker.types import Mount
+
 
 class ContainerFinder:
 	docker = None
@@ -27,7 +29,7 @@ class ContainerFinder:
 		return container
 
 	def destroyContainer(self):
-		container = self.findAndEnsureStopped()	
+		container = self.findAndEnsureStopped()
 		container.remove()
 
 	def findContainer(self):
