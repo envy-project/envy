@@ -8,7 +8,7 @@ class ImageFinder:
 		self.docker = docker
 
 	def findImage(self):
-		expectedTag = 'envy-' + appConfig.getConfigFileHash()
+		expectedTag = 'envy-" + appConfig.getConfigFileHash()
 		images = self.docker.images.list()
 		for image in images:
 			if expectedTag in image.tags:
