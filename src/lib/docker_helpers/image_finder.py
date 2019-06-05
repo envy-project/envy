@@ -2,16 +2,26 @@ import lib.config.placeholder as appConfig
 from lib.docker_helpers.apt_image_creator import AptImageCreator
 
 class ImageFinder:
-	"""Gets you an image ID for this project - either created fresh or provided by the hash"""
+	""" Gets you an image ID for this project - either created fresh or already created and identified by the hash.
+		See also: ContainerFinder
+		Args:
+			docker (Client): A Docker client
+
+	"""
 	docker = None
 	def __init__(self, docker):
 		self.docker = docker
 
 	def destroyImage(self):
+		""" Destroy the image, if it existed """
 		imgId = self.findImage()
 		self.docker.images.remove(image=imgId)
 
 	def findImage(self):
+		""" Create a docker image
+			Returns:
+				string: The Docker image ID
+		"""
 		expectedTag = 'envy-' + appConfig.getConfigFileHash()
 		images = self.docker.images.list()
 		for image in images:
