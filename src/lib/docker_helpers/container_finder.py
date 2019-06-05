@@ -2,6 +2,8 @@ import logging
 import lib.config.placeholder as appConfig
 from lib.docker_helpers.image_finder import ImageFinder
 
+from docker.types import Mount
+
 class ContainerFinder:
 	docker = None
 
@@ -24,6 +26,10 @@ class ContainerFinder:
 			container.kill()
 		return container
 
+	def destroyContainer(self):
+		container = self.findAndEnsureStopped()	
+		container.remove()
+
 	def findContainer(self):
 		expectedLabel = self.expectedLabel()
 		containers = self.docker.containers.list(all=True)
@@ -32,5 +38,6 @@ class ContainerFinder:
 				return container
 		imageId = self.imageFinder.findImage()
 		logging.info('Creating new container for: %s', imageId)
-		container = self.docker.containers.create(imageId, 'tail -f /dev/null', name=expectedLabel)
+		projectMount = Mount('/project', appConfig.getProjectBasePath(), type='bind')
+		container = self.docker.containers.create(imageId, 'tail -f /dev/null', name=expectedLabel, mounts=[projectMount])
 		return container

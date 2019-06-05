@@ -7,6 +7,10 @@ class ImageFinder:
 	def __init__(self, docker):
 		self.docker = docker
 
+	def destroyImage(self):
+		imgId = self.findImage()
+		self.docker.images.remove(image=imgId)
+
 	def findImage(self):
 		expectedTag = 'envy-' + appConfig.getConfigFileHash()
 		images = self.docker.images.list()
