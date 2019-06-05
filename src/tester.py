@@ -1,6 +1,6 @@
-from lib.docker_helpers.image_finder import ImageFinder
+from lib.docker_helpers.container_finder import ContainerFinder
 import docker
 client = docker.from_env()
-t = ImageFinder(client)
-print(t.findImage())
+t = ContainerFinder(client)
+print(t.findAndEnsureRunning().id)
 

@@ -1,5 +1,7 @@
 - Build config file parsing
 - Argument parsing & pretty-print tasks
 - Run tasks using envy, without worrying about Docker
-- Management of container & image IDs using a .envy file
-- envy up should dump you in the container
+- envy up should dump you in the container (this is pretty much ready - make a ContainerFinder, call findAndEnsureRunning, then exec + attach /bin/bash)
+- Container creation should probably have a volume?
+- Investigate config hashing, goal is to avoid losing track of a container.
+  - Omer suggested storing container and image ids in a .envy file
