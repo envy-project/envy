@@ -13,10 +13,15 @@ class ContainerFinder:
 		return 'envy-' + appConfig.getConfigFileHash() + '-container'
 
 	def findAndEnsureRunning(self):
-		# List only running containers
 		container = self.findContainer()
 		if 'running' not in container.status:
 			container.start()
+		return container
+
+	def findAndEnsureStopped(self):
+		container = self.findContainer()
+		if 'running' in container.status:
+			container.kill()
 		return container
 
 	def findContainer(self):
