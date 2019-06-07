@@ -13,6 +13,6 @@ jobs:
             sudo pip install pipenv
             pipenv install -d
       - run:
-          command: cd ~/project/src && pipenv run pylint *.py lib
+          command: cd ~/project/src && pipenv run pylint src
       - run:
           command: cd ~/project/src && pipenv run black --check .
