@@ -14,4 +14,3 @@ jobs:
             pipenv install
       - run:
           command: cd ~/project/src && pipenv run pylint lib
-
