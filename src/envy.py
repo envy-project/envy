@@ -2,6 +2,7 @@
 
 import argparse
 
+from lib.config.validate import validateConfigFile
 
 def upCommand(args, unknownArgs):
 	print("Fake creating environment")
@@ -26,7 +27,7 @@ def buildCustomCommandParser(subparsers, name, info):
 
 def getParser(actions):
 	parser = argparse.ArgumentParser(description="ENVY DESCRIPTION TODO")
-	subparsers = parser.add_subparsers()
+	subparsers = parser.add_subparsers(dest='subparser_name')
 	# Create 'up' parser
 	parserUp = subparsers.add_parser('up', help='ENVY UP HELP')
 	parserUp.set_defaults(func=upCommand)
@@ -54,26 +55,33 @@ def getParser(actions):
 
 
 def main():
-	parser = getParser({
-		'build': {
-			'script': 'some script',
-			'help': 'build the project',
-		},
-		'lint': {
-			'script': 'lint script',
-			'help': 'lint the project',
-		},
-		'custom': [
-			{
-				'name': 'customName',
-				'script': 'customScript',
-				'help': 'customHelp',
-				'description': 'customDescription',
+	configData = {
+		'actions': {
+			'build': {
+				'script': 'some script',
+				'help': 'build the project',
 			},
-		],
-	})
+			'lint': {
+				'script': 'lint script',
+				'help': 'lint the project',
+			},
+			'custom': [
+				{
+					'name': 'customName',
+					'script': 'customScript',
+					'help': 'customHelp',
+					'description': 'customDescription',
+				},
+			],
+		},
+	}
+	configData = validateConfigFile(configData)
+	parser = getParser(configData['actions'])
 	args, unknown = parser.parse_known_args()
-	args.func(args, unknown)
+	if args.subparser_name:
+		args.func(args, unknown)
+	else:
+		parser.print_help()
 
 
 if __name__ == '__main__':
