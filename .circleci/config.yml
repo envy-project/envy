@@ -13,4 +13,4 @@ jobs:
             sudo pip install pipenv
             pipenv install
       - run:
-          command: cd ~/project/src && pipenv run pylint lib
+          command: cd ~/project/src && pipenv run pylint *.py lib

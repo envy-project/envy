@@ -7,18 +7,22 @@ from lib.config.validate import validateConfigFile
 
 def upCommand(args, unknownArgs):
     print("Fake creating environment")
+    print(args, unknownArgs)
 
 
 def downCommand(args, unknownArgs):
     print("Fake turning off environment")
+    print(args, unknownArgs)
 
 
 def nukeCommand(args, unknownArgs):
     print("Fake nuking environment")
+    print(args, unknownArgs)
 
 
 def runScript(args, unknownArgs, script):
     print('Running script "{}"'.format(script))
+    print(args, unknownArgs)
 
 
 def buildCustomCommandParser(subparsers, name, info):

@@ -1,4 +1,4 @@
-from lib.docker_helpers.container_finder import ContainerFinder
 import docker
-client = docker.from_env()
-t = ContainerFinder(client)
+from lib.docker_helpers.container_finder import ContainerFinder
+CLIENT = docker.from_env()
+T = ContainerFinder(CLIENT)
