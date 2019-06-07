@@ -1,12 +1,10 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8fdefc776b81d4104979f8270b066858f267785f7eccca4c30dbb26db02380dd"
+            "sha256": "06e54cb4e89e0f2f378b02f44a4495a1c6cf43711851bc0d4e69948ee63f106e"
         },
         "pipfile-spec": 6,
-        "requires": {
-            "python_version": "3.6"
-        },
+        "requires": {},
         "sources": [
             {
                 "name": "pypi",
@@ -54,6 +52,11 @@
             ],
             "index": "pypi",
             "version": "==4.0.1"
+        },
+        "dockerpty": {
+            "editable": true,
+            "git": "https://github.com/deanrock/dockerpty",
+            "ref": "73cc6f947a9501717b42158a9e839bf96bedeb69"
         },
         "idna": {
             "hashes": [
