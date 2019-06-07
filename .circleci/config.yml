@@ -11,6 +11,8 @@ jobs:
       - run:
           command: |  # use pipenv to install dependencies
             sudo pip install pipenv
-            pipenv install
+            pipenv install -d
       - run:
           command: cd ~/project/src && pipenv run pylint *.py lib
+      - run:
+          command: cd ~/project/src && pipenv run black --check .

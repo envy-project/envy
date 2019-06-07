@@ -4,6 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "==2.3.1"
+black = "*"
 
 [packages]
 astroid = "==2.2.5"
@@ -14,7 +16,6 @@ idna = "==2.8"
 isort = "==4.3.20"
 lazy-object-proxy = "==1.4.1"
 mccabe = "==0.6.1"
-pylint = "==2.3.1"
 requests = "==2.22.0"
 schema = "==0.7.0"
 six = "==1.12.0"
@@ -23,3 +24,10 @@ urllib3 = "==1.25.3"
 wrapt = "==1.11.1"
 websocket_client = "==0.56.0"
 dockerpty = {editable = true,git = "https://github.com/deanrock/dockerpty",ref = "new-docker-library"}
+pyyaml = "*"
+
+[requires]
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true

@@ -6,4 +6,4 @@ CLIENT = docker.from_env()
 T = ContainerFinder(CLIENT)
 CONTAINER = T.findAndEnsureRunning()
 
-dockerpty.exec_command(CLIENT, CONTAINER.id, '/bin/bash')
+dockerpty.exec_command(CLIENT, CONTAINER.id, "/bin/bash")

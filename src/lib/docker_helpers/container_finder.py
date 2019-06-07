@@ -4,6 +4,7 @@ from docker.types import Mount
 import lib.config.placeholder as appConfig
 from lib.docker_helpers.image_finder import ImageFinder
 
+
 class ContainerFinder:
     """ Class to assist in finding a Docker container.
         Will build image if it has not already been built.
@@ -11,6 +12,7 @@ class ContainerFinder:
         Args:
             docker (Client): A docker client
     """
+
     docker = None
 
     def __init__(self, docker):
@@ -18,7 +20,7 @@ class ContainerFinder:
         self.imageFinder = ImageFinder(docker)
 
     def expectedLabel(self):
-        return 'envy-' + appConfig.getConfigFileHash() + '-container'
+        return "envy-" + appConfig.getConfigFileHash() + "-container"
 
     def findAndEnsureRunning(self):
         """ Find a container and ensure that the container is running
@@ -26,7 +28,7 @@ class ContainerFinder:
                 The docker container object, in a running state
         """
         container = self.findContainer()
-        if 'running' not in container.status:
+        if "running" not in container.status:
             container.start()
         return container
 
@@ -36,7 +38,7 @@ class ContainerFinder:
                 The docker container object, in a stopped state
         """
         container = self.findContainer()
-        if 'running' in container.status:
+        if "running" in container.status:
             container.kill()
         return container
 
@@ -57,7 +59,9 @@ class ContainerFinder:
             if container.name == expectedLabel:
                 return container
         imageId = self.imageFinder.findImage()
-        logging.info('Creating new container for: %s', imageId)
-        projectMount = Mount('/project', appConfig.getProjectBasePath(), type='bind')
-        container = self.docker.containers.create(imageId, 'tail -f /dev/null', name=expectedLabel, mounts=[projectMount])
+        logging.info("Creating new container for: %s", imageId)
+        projectMount = Mount("/project", appConfig.getProjectBasePath(), type="bind")
+        container = self.docker.containers.create(
+            imageId, "tail -f /dev/null", name=expectedLabel, mounts=[projectMount]
+        )
         return container
