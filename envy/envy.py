@@ -2,10 +2,8 @@
 
 import argparse
 import subprocess
-import sys
 
-from lib.config.file import findConfigFile, parseConfigFile
-from lib.config.validate import validateConfigFile
+from lib.config import CONFIG_DATA
 
 
 def upCommand(args, unknownArgs):
@@ -60,13 +58,7 @@ def getParser(actions):
 
 
 def main():
-    configFile = findConfigFile()
-    if configFile is None:
-        sys.stderr.write("Envy config file not found.\n")
-        sys.exit(1)
-    configData = parseConfigFile(configFile)
-    configData = validateConfigFile(configData)
-    parser = getParser(configData["actions"])
+    parser = getParser(CONFIG_DATA["actions"])
     args, unknown = parser.parse_known_args()
     if args.subparser_name:
         args.func(args, unknown)
