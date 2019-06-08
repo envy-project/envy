@@ -1,12 +1,11 @@
 actions:
-  build:
+  - name: 'build'
     script: 'some script'
     help: 'build the project'
-  lint:
+  - name: 'lint'
     script: 'lint script'
     help: 'lint the project'
-  custom:
-    - name: 'customName'
-      script: 'customScript'
-      help: 'customHelp'
-      description: 'customDescription'
+  - name: 'customName'
+    script: 'customScript'
+    help: 'customHelp'
+    description: 'customDescription'

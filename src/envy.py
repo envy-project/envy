@@ -51,16 +51,9 @@ def getParser(actions):
     parserNuke = subparsers.add_parser("nuke", help="ENVY NUKE HELP")
     parserNuke.set_defaults(func=nukeCommand)
 
-    # Create parsers for 'standard' commands
-    if "build" in actions:
-        buildCustomCommandParser(subparsers, "build", actions["build"])
-    if "lint" in actions:
-        buildCustomCommandParser(subparsers, "lint", actions["lint"])
-
     # Create parsers for arbitrary custom commands
-    if "custom" in actions:
-        for action in actions["custom"]:
-            buildCustomCommandParser(subparsers, action["name"], action)
+    for action in actions:
+        buildCustomCommandParser(subparsers, action["name"], action)
 
     return parser
 

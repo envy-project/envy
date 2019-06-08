@@ -4,21 +4,9 @@ from schema import Schema, SchemaError, Optional
 # TODO add schema information for environment stuff
 _SCHEMA = Schema(
     {
-        "actions": {
-            Optional("build"): {
-                "script": str,
-                "help": str,
-                Optional("description"): str,
-            },
-            Optional("lint"): {
-                "script": str,
-                "help": str,
-                Optional("description"): str,
-            },
-            Optional("custom"): [
-                {"name": str, "script": str, "help": str, Optional("description"): str}
-            ],
-        }
+        Optional("actions"): [
+            {"name": str, "script": str, "help": str, Optional("description"): str}
+        ]
     }
 )
 
