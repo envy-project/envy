@@ -9,10 +9,21 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Prep cache
+          command: sudo chown -R circleci:circleci /usr/local/bin ; sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
+      - restore_cache:
+          key: pipdeps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run:
           name: Install pip dependencies
           command: |  # use pipenv to install dependencies
             sudo pip install pipenv
             pipenv install -d
+      - save_cache:
+          key: pipdeps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.7/site-packages"
       - run:
           name: PyLint
           command: cd ~/project/src && pipenv run pylint src
