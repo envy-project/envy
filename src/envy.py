@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
+import subprocess
 import sys
 
 from lib.config.file import findConfigFile, parseConfigFile
@@ -22,9 +23,9 @@ def nukeCommand(args, unknownArgs):
     print(args, unknownArgs)
 
 
-def runScript(args, unknownArgs, script):
-    print('Running script "{}"'.format(script))
-    print(args, unknownArgs)
+def runScript(_, unknownArgs, script):
+    # TODO run this in the container once it exists
+    subprocess.run("{} {}".format(script, " ".join(unknownArgs)), shell=True)
 
 
 def buildCustomCommandParser(subparsers, name, info):
