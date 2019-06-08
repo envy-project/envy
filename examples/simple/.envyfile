@@ -1,11 +1,11 @@
 actions:
-  - name: 'build'
-    script: 'some script'
+  - name: build
+    script: scripts/build.sh
     help: 'build the project'
-  - name: 'lint'
-    script: 'lint script'
+  - name: lint
+    script: scripts/lint.sh
     help: 'lint the project'
-  - name: 'customName'
-    script: 'customScript'
+  - name: customScript
+    script: scripts/custom.sh
     help: 'customHelp'
     description: 'customDescription'
