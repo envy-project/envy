@@ -4,4 +4,4 @@ def getConfigFileHash():
 
 
 def getExtraExecutables():
-    return ["/home/alex/creator.sh"]
+    return []
