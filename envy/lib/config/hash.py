@@ -1,10 +1,14 @@
 import hashlib
 import json
 
-
-def hashFullConfig(config):
-    return hashlib.md5(json.dumps(config).encode("utf-8")).hexdigest()
+from .config import ENVY_CONFIG
 
 
-def hashEnvironmentConfig(config):
-    return hashlib.md5(json.dumps(config["environment"]).encode("utf-8")).hexdigest()
+def hashFullConfig():
+    return hashlib.md5(json.dumps(ENVY_CONFIG).encode("utf-8")).hexdigest()
+
+
+def hashEnvironmentConfig():
+    return hashlib.md5(
+        json.dumps(ENVY_CONFIG["environment"]).encode("utf-8")
+    ).hexdigest()
