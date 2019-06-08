@@ -2,7 +2,7 @@ import pathlib
 
 import yaml
 
-_CONFIG_FILE_NAME = ".envy-conf"
+_CONFIG_FILE_NAME = ".envyfile"
 
 
 def findConfigFile():
