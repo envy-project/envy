@@ -27,7 +27,7 @@ dockerpty = {editable = true,git = "https://github.com/deanrock/dockerpty",ref =
 pyyaml = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7.3"
 
 [pipenv]
 allow_prereleases = true
