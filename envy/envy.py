@@ -4,12 +4,15 @@ import argparse
 import subprocess
 
 from envy.lib.config import ENVY_CONFIG
-from envy.lib.state import getHash
+from envy.lib.state import didEnvironmentChange
 
 
 def upCommand(args, unknownArgs):
-    print("Previous environment hash: {}".format(getHash()))
-    print("Fake creating environment")
+    if didEnvironmentChange():
+        print("Environment is out of date! Should create new container.")
+    else:
+        print("Environment is up to date :D")
+
     print(args, unknownArgs)
 
 

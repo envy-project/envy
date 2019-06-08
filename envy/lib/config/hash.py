@@ -7,4 +7,4 @@ def hashFullConfig(config):
 
 
 def hashEnvironmentConfig(config):
-    return hashlib.md5(json.dumps(config["environment"].encode("utf-8"))).hexdigest()
+    return hashlib.md5(json.dumps(config["environment"]).encode("utf-8")).hexdigest()
