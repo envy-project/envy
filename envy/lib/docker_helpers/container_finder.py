@@ -2,6 +2,7 @@ import logging
 from docker.types import Mount
 
 import envy.lib.config.placeholder as appConfig
+from envy.lib.config import ENVY_CONFIG_FILE_PATH
 from envy.lib.docker_helpers.image_finder import ImageFinder
 
 
@@ -60,7 +61,7 @@ class ContainerFinder:
                 return container
         imageId = self.imageFinder.findImage()
         logging.info("Creating new container for: %s", imageId)
-        projectMount = Mount("/project", appConfig.getProjectBasePath(), type="bind")
+        projectMount = Mount("/project", ENVY_CONFIG_FILE_PATH.parent, type="bind")
         dockerSocketMount = Mount(
             "/var/run/docker.sock", "/var/run/docker.sock", type="bind"
         )
