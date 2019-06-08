@@ -10,13 +10,11 @@ _SCHEMA = Schema(
                 Optional("python3"): str,
                 Optional("node"): str,
                 Optional("ruby"): str,
-                Optional("native"): [
-                    {"recipe": str, "version": Or(str, int, float)},
-                ],
-            },
+                Optional("native"): [{"recipe": str, "version": Or(str, int, float)}],
+            }
         },
         Optional("actions"): [
-            {"name": str, "script": str, "help": str, Optional("description"): str},
+            {"name": str, "script": str, "help": str, Optional("description"): str}
         ],
     }
 )
