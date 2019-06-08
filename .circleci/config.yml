@@ -26,7 +26,7 @@ jobs:
             - "/usr/local/lib/python3.7/site-packages"
       - run:
           name: PyLint
-          command: cd ~/project/src && pipenv run pylint src
+          command: cd ~/project/envy && pipenv run pylint envy
       - run:
           name: Black
-          command: cd ~/project/src && pipenv run black --check .
+          command: cd ~/project/envy && pipenv run black --check .
