@@ -9,10 +9,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install pip dependencies
           command: |  # use pipenv to install dependencies
             sudo pip install pipenv
             pipenv install -d
       - run:
+          name: PyLint
           command: cd ~/project/src && pipenv run pylint src
       - run:
+          name: Black
           command: cd ~/project/src && pipenv run black --check .
