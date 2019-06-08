@@ -8,8 +8,6 @@ class AptImageCreator(ImageCreator):
     def getPackageString(self, packages):
         # TODO: validation here to ensure shell safety
         aptString = " ".join(packages)
-        return (
-            "apt-get update && apt-get install -y "
-            + aptString
-            + " && rm -rf /var/lib/apt/lists/*"
+        return "apt-get update && apt-get install -y {} && rm -rf /var/lib/apt/lists/*".format(
+            aptString
         )

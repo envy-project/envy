@@ -6,7 +6,7 @@ actions:
     script: 'cd envy ; pylint envy ; pipenv run black .'
     help: 'lint the project'
   - name: pylint
-    script: 'pylint envy'
+    script: 'cd envy ; pylint envy'
     help: 'run pylint alone'
   - name: black
     script: 'black .'
