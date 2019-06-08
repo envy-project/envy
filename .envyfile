@@ -1,15 +1,6 @@
 environment:
   dependencies:
     python3: Pipfile
-    node: package.json
-    ruby: Gemfile
-    native:
-      - recipe: imagemagick
-        version: 4
-      - recipe: curl
-        version: 0.1.1
-      - recipe: vim
-        version: 1.2
 actions:
   - name: lint
     script: 'cd src ; pylint src ; pipenv run black .'
