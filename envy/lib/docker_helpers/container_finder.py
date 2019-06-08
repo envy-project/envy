@@ -1,8 +1,8 @@
 import logging
 from docker.types import Mount
 
-import lib.config.placeholder as appConfig
-from lib.docker_helpers.image_finder import ImageFinder
+import envy.lib.config.placeholder as appConfig
+from envy.lib.docker_helpers.image_finder import ImageFinder
 
 
 class ContainerFinder:

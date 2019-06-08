@@ -3,7 +3,7 @@ import tarfile
 import io
 import os.path
 from abc import ABC, abstractmethod
-from lib.config.placeholder import getConfigFileHash
+from envy.lib.config.placeholder import getConfigFileHash
 
 
 class ImageCreator(ABC):

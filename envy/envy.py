@@ -3,7 +3,7 @@
 import argparse
 import subprocess
 
-from lib.config import ENVY_CONFIG
+from envy.lib.config import ENVY_CONFIG
 
 
 def upCommand(args, unknownArgs):
