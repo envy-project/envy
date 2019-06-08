@@ -1,4 +1,5 @@
 import envy.lib.config.placeholder as appConfig
+from envy.lib.config import ENVY_CONFIG
 from envy.lib.docker_helpers.apt_image_creator import AptImageCreator
 
 
@@ -34,6 +35,7 @@ class ImageFinder:
         aic = AptImageCreator(self.docker)
 
         # TODO: packages need to be made more portable
+        # TODO: this expects "native" to have a list of strings but it's a list of dicts
         return aic.createImage(
-            appConfig.getNeededPackages(), appConfig.getExtraExecutables()
+            ENVY_CONFIG["environment"]["dependencies"]["native"], appConfig.getExtraExecutables()
         )

@@ -3,10 +3,6 @@ def getConfigFileHash():
     return "temp-config-hash"
 
 
-def getNeededPackages():
-    return ["nginx"]
-
-
 def getExtraExecutables():
     return ["/home/alex/creator.sh"]
 
