@@ -4,9 +4,11 @@ import argparse
 import subprocess
 
 from envy.lib.config import ENVY_CONFIG
+from envy.lib.state import getHash
 
 
 def upCommand(args, unknownArgs):
+    print("Previous environment hash: {}".format(getHash()))
     print("Fake creating environment")
     print(args, unknownArgs)
 
