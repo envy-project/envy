@@ -10,7 +10,9 @@ _SCHEMA = Schema(
                 Optional("python3", default="Pipfile"): str,
                 Optional("node", default="package.json"): str,
                 Optional("ruby", default="gemfile"): str,
-                Optional("native", default=[]): [{"recipe": str, "version": Or(str, int, float)}],
+                Optional("native", default=[]): [
+                    {"recipe": str, "version": Or(str, int, float)}
+                ],
             }
         },
         Optional("actions"): [

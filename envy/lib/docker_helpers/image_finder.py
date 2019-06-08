@@ -37,5 +37,6 @@ class ImageFinder:
         # TODO: packages need to be made more portable
         # TODO: this expects "native" to have a list of strings but it's a list of dicts
         return aic.createImage(
-            ENVY_CONFIG["environment"]["dependencies"]["native"], appConfig.getExtraExecutables()
+            ENVY_CONFIG["environment"]["dependencies"]["native"],
+            appConfig.getExtraExecutables(),
         )
