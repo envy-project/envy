@@ -61,7 +61,13 @@ class ContainerFinder:
         imageId = self.imageFinder.findImage()
         logging.info("Creating new container for: %s", imageId)
         projectMount = Mount("/project", appConfig.getProjectBasePath(), type="bind")
+        dockerSocketMount = Mount(
+            "/var/run/docker.sock", "/var/run/docker.sock", type="bind"
+        )
         container = self.docker.containers.create(
-            imageId, "tail -f /dev/null", name=expectedLabel, mounts=[projectMount]
+            imageId,
+            "tail -f /dev/null",
+            name=expectedLabel,
+            mounts=[projectMount, dockerSocketMount],
         )
         return container
