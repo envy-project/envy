@@ -3,7 +3,7 @@
 import argparse
 import subprocess
 
-from lib.config import CONFIG_DATA
+from lib.config import ENVY_CONFIG
 
 
 def upCommand(args, unknownArgs):
@@ -58,7 +58,7 @@ def getParser(actions):
 
 
 def main():
-    parser = getParser(CONFIG_DATA["actions"])
+    parser = getParser(ENVY_CONFIG["actions"])
     args, unknown = parser.parse_known_args()
     if args.subparser_name:
         args.func(args, unknown)
