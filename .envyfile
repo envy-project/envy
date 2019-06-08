@@ -12,7 +12,7 @@ environment:
         version: 1.2
 actions:
   - name: lint
-    script: 'pylint src ; pipenv run black .'
+    script: 'cd src ; pylint src ; pipenv run black .'
     help: 'lint the project'
   - name: pylint
     script: 'pylint src'
