@@ -1,8 +1,7 @@
 import logging
 from docker.types import Mount
 
-import envy.lib.config.placeholder as appConfig
-from envy.lib.config import ENVY_CONFIG_FILE_PATH
+from envy.lib.config import ENVY_CONFIG_FILE_PATH, ENVY_CONFIG
 from envy.lib.docker_helpers.image_finder import ImageFinder
 
 
@@ -21,7 +20,7 @@ class ContainerFinder:
         self.imageFinder = ImageFinder(docker)
 
     def expectedLabel(self):
-        return "envy-" + appConfig.getConfigFileHash() + "-container"
+        return "envy-" + ENVY_CONFIG.getEnvironmentHash() + "-container"
 
     def findAndEnsureRunning(self):
         """ Find a container and ensure that the container is running

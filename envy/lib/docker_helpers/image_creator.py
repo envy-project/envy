@@ -3,7 +3,8 @@ import tarfile
 import io
 import os.path
 from abc import ABC, abstractmethod
-from envy.lib.config.placeholder import getConfigFileHash
+
+from envy.lib.config import ENVY_CONFIG
 
 
 class ImageCreator(ABC):
@@ -33,7 +34,7 @@ class ImageCreator(ABC):
         tarBytes = self.buildTarballBytes(dockerfile, nativeExecutables)
         image, logs = self.docker.images.build(
             custom_context=True,
-            tag="envy-" + getConfigFileHash(),
+            tag="envy-" + ENVY_CONFIG.getEnvironmentHash(),
             rm=True,
             fileobj=tarBytes,
         )

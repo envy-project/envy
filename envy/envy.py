@@ -63,7 +63,7 @@ def getParser(actions):
 
 
 def main():
-    parser = getParser(ENVY_CONFIG["actions"])
+    parser = getParser(ENVY_CONFIG.getActions())
     args, unknown = parser.parse_known_args()
     if args.subparser_name:
         args.func(args, unknown)

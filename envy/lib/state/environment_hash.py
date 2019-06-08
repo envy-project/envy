@@ -1,6 +1,6 @@
 import os
 
-from envy.lib.config import hashEnvironmentConfig
+from envy.lib.config import ENVY_CONFIG
 
 from .directory import ENVY_STATE_PATH
 
@@ -8,7 +8,7 @@ HASH_FILE_PATH = "{}/environment.md5".format(ENVY_STATE_PATH)
 
 
 def didEnvironmentChange():
-    return hashEnvironmentConfig() != getHash()
+    return ENVY_CONFIG.getEnvironmentHash() != getHash()
 
 
 def getHash():
