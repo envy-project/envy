@@ -7,6 +7,7 @@ import dockerpty
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import ENVY_STATE
 from envy.lib.docker_helpers.container_finder import ContainerFinder
+from envy.lib.docker_helpers.image_finder import ImageFinder
 
 
 def upCommand(_args, _unknownArgs):
@@ -20,17 +21,28 @@ def upCommand(_args, _unknownArgs):
         # TODO this does not remove the image
 
     containerFinder.findAndEnsureRunning()
-    print("Envy environment successfully running.")
+
+    ENVY_STATE.updateEnvironmentHash()
+    print("ENVy environment successfully running.")
 
 
-def downCommand(args, unknownArgs):
-    print("Fake turning off environment")
-    print(args, unknownArgs)
+def downCommand(_args, _unknownArgs):
+    dockerClient = docker.from_env()
+    containerFinder = ContainerFinder(dockerClient)
+
+    containerFinder.findAndEnsureStopped()
+    print("ENVy environment stopped")
 
 
-def nukeCommand(args, unknownArgs):
-    print("Fake nuking environment")
-    print(args, unknownArgs)
+def nukeCommand(_args, _unknownArgs):
+    dockerClient = docker.from_env()
+    containerFinder = ContainerFinder(dockerClient)
+    imageFinder = ImageFinder(dockerClient)
+
+    containerFinder.destroyContainer()
+    imageFinder.destroyImage()
+    ENVY_STATE.nuke()
+    print("ENVy environment destroyed")
 
 
 def runScript(_args, unknownArgs, script):
@@ -80,8 +92,6 @@ def main():
         args.func(args, unknown)
     else:
         parser.print_help()
-
-    ENVY_STATE.updateEnvironmentHash()
 
 
 if __name__ == "__main__":

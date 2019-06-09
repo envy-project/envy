@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from envy.lib.config import ENVY_CONFIG
 
@@ -6,6 +7,9 @@ from envy.lib.config import ENVY_CONFIG
 class EnvyState:
     def __init__(self, dirPath):
         self.directory = dirPath
+
+    def nuke(self):
+        shutil.rmtree(self.directory)
 
     def didEnvironmentChange(self):
         if self.getEnvironmentHash() is None:
