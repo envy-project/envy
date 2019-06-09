@@ -3,7 +3,6 @@
     - @Alex what is this meant for?
 - exit on invalid schema in a better way
 - `envy status`
-- `envy shell`
 - validate existance of nativeExecutables
 - different images based on config file
 - make packages portable (homebrew?)
