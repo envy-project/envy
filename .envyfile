@@ -3,7 +3,7 @@ environment:
     python3: Pipfile
 actions:
   - name: lint
-    script: 'cd envy ; pipenv run black . ; pylint envy'
+    script: 'pipenv run black . ; pylint envy'
     help: 'lint the project'
   - name: pylint
     script: 'cd envy ; pylint envy'
