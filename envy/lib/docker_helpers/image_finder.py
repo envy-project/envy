@@ -31,9 +31,6 @@ class ImageFinder:
         """
         expectedID = ENVY_STATE.getImageID()
         images = self.docker.images.list()
-        import pdb
-
-        pdb.set_trace()
         for image in images:
             if image.id == expectedID:
                 return image.id
