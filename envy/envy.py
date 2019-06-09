@@ -27,6 +27,15 @@ def upCommand(_args, _unknownArgs):
     print("ENVy environment successfully running.")
 
 
+def shellCommand(_args, _unknownArgs):
+    dockerClient = docker.from_env()
+    containerFinder = ContainerFinder(dockerClient)
+
+    container = containerFinder.findContainer()
+
+    dockerpty.exec_command(dockerClient, container.id, "/bin/bash")
+
+
 def downCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
     containerFinder = ContainerFinder(dockerClient)
@@ -70,6 +79,10 @@ def getParser(actions):
     # Create 'up' parser
     parserUp = subparsers.add_parser("up", help="ENVY UP HELP")
     parserUp.set_defaults(func=upCommand)
+
+    # Create 'shell' parser
+    parserShell = subparsers.add_parser("shell", help="ENVY SHELL HELP")
+    parserShell.set_defaults(func=shellCommand)
 
     # Create 'down' parser
     parserDown = subparsers.add_parser("down", help="ENVY DOWN HELP")
