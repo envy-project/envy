@@ -20,6 +20,9 @@ class ImageCreator(ABC):
     def __init__(self, docker):
         self.docker = docker
 
+    def buildImageTag(self):
+        return "envy-{}".format(ENVY_CONFIG.getEnvironmentHash())
+
     def createImage(self, packages, nativeExecutables=None):
         """ Create a docker image from a set of packages and executables.
             NOTE: currently not validating either packages or executables
@@ -33,10 +36,7 @@ class ImageCreator(ABC):
         dockerfile = self.buildDockerfile(packages, nativeExecutables)
         tarBytes = self.buildTarballBytes(dockerfile, nativeExecutables)
         image, logs = self.docker.images.build(
-            custom_context=True,
-            tag="envy-" + ENVY_CONFIG.getEnvironmentHash(),
-            rm=True,
-            fileobj=tarBytes,
+            custom_context=True, tag=self.buildImageTag(), rm=True, fileobj=tarBytes
         )
         logging.info(logs)
         return image.id

@@ -72,7 +72,6 @@ class ContainerFinder:
         if existingContainer is not None:
             return existingContainer
 
-        # TODO are we leaving dangling images
         imageId = self.imageFinder.findOrCreateImage()
 
         logging.info("Creating new container for: %s", imageId)

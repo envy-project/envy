@@ -54,3 +54,21 @@ class EnvyState:
 
     def getContainerFile(self):
         return "{}/container.dockerid".format(self.directory)
+
+    def getImageID(self):
+        path = self.getImageFile()
+
+        if os.path.isfile(path):
+            with open(path, "r") as f:
+                return f.read().rstrip()
+        else:
+            return None
+
+    def setImageID(self, newID):
+        path = self.getImageFile()
+
+        with open(path, "w") as f:
+            f.write(newID)
+
+    def getImageFile(self):
+        return "{}/image.dockerid".format(self.directory)

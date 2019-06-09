@@ -1,4 +1,5 @@
 from envy.lib.config import ENVY_CONFIG
+from envy.lib.state import ENVY_STATE
 from envy.lib.docker_helpers.apt_image_creator import AptImageCreator
 
 
@@ -28,10 +29,13 @@ class ImageFinder:
             Returns:
                 string: The Docker image ID
         """
-        expectedTag = "envy-" + ENVY_CONFIG.getEnvironmentHash()
+        expectedID = ENVY_STATE.getImageID()
         images = self.docker.images.list()
+        import pdb
+
+        pdb.set_trace()
         for image in images:
-            if expectedTag in image.tags:
+            if image.id == expectedID:
                 return image.id
         return None
 
@@ -46,6 +50,10 @@ class ImageFinder:
         aic = AptImageCreator(self.docker)
 
         # TODO: packages need to be made more portable
-        return aic.createImage(
+        image_id = aic.createImage(
             ENVY_CONFIG.getNativeDependencies(), ENVY_CONFIG.getExtraExecutables()
         )
+
+        ENVY_STATE.setImageID(image_id)
+
+        return image_id

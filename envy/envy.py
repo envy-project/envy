@@ -13,12 +13,12 @@ from envy.lib.docker_helpers.image_finder import ImageFinder
 def upCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
     containerFinder = ContainerFinder(dockerClient)
+    imageFinder = ImageFinder(dockerClient)
 
     if ENVY_STATE.didEnvironmentChange():
         print("Detected change in config environment. Re-creating container.")
         containerFinder.destroyContainer()
-        # TODO this creates the container if not found, then immediately destroys it
-        # TODO this does not remove the image
+        imageFinder.destroyImage()
 
     containerFinder.findOrCreateContainer()
     containerFinder.findAndEnsureRunning()
