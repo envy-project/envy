@@ -60,7 +60,7 @@ class ContainerFinder:
                 return container
         imageId = self.imageFinder.findImage()
         logging.info("Creating new container for: %s", imageId)
-        projectMount = Mount("/project", ENVY_CONFIG_FILE_PATH.parent, type="bind")
+        projectMount = Mount("/project", str(ENVY_CONFIG_FILE_PATH.parent), type="bind")
         dockerSocketMount = Mount(
             "/var/run/docker.sock", "/var/run/docker.sock", type="bind"
         )

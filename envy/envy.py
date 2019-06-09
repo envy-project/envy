@@ -1,19 +1,22 @@
 #!/usr/bin/python3
 
 import argparse
-import subprocess
+import docker
+import dockerpty
 
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import didEnvironmentChange
+from envy.lib.docker_helpers.container_finder import ContainerFinder
 
 
-def upCommand(args, unknownArgs):
+def upCommand(_args, _unknownArgs):
+    CLIENT = docker.from_env()
+    T = ContainerFinder(CLIENT)
     if didEnvironmentChange():
-        print("Environment is out of date! Should create new container.")
-    else:
-        print("Environment is up to date :D")
-
-    print(args, unknownArgs)
+        print("Detected change in config environment. Re-creating container.")
+        T.destroyContainer()
+    T.findAndEnsureRunning()
+    print("Envy environment successfully running.")
 
 
 def downCommand(args, unknownArgs):
@@ -26,9 +29,13 @@ def nukeCommand(args, unknownArgs):
     print(args, unknownArgs)
 
 
-def runScript(_, unknownArgs, script):
-    # TODO run this in the container once it exists
-    subprocess.run("{} {}".format(script, " ".join(unknownArgs)), shell=True)
+def runScript(_args, unknownArgs, script):
+    dockerClient = docker.from_env()
+    containerFinder = ContainerFinder(dockerClient)
+    container = containerFinder.findAndEnsureRunning()
+
+    command = "{} {}".format(script, " ".join(unknownArgs))
+    dockerpty.exec_command(dockerClient, container.id, command)
 
 
 def buildCustomCommandParser(subparsers, name, info):

@@ -1,6 +1,9 @@
 environment:
   dependencies:
     python3: Pipfile
+    native:
+      - recipe: docker
+        version: 1.5-1build1
 actions:
   - name: lint
     script: 'pipenv run black . ; pylint envy'
@@ -11,4 +14,3 @@ actions:
   - name: black
     script: 'black .'
     help: 'run black alone'
-
