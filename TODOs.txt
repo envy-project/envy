@@ -1,3 +1,4 @@
+- better error handling (down / nuke / lint all error badly if up hasn't been run, up errors badly if docker isn't running, etc.)
 - Extra executables should be defined and implemented
     - @Alex what is this meant for?
 - exit on invalid schema in a better way
