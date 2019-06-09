@@ -6,4 +6,3 @@
 - validate existance of nativeExecutables
 - different images based on config file
 - make packages portable (homebrew?)
-- Figure out how an envy down from within the Docker container will leave and tear it down. Unix sockets?? Should probably establish a good pattern for this.
