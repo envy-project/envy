@@ -8,6 +8,8 @@ class EnvyState:
         self.directory = dirPath
 
     def didEnvironmentChange(self):
+        if self.getEnvironmentHash() is None:
+            return False
         return ENVY_CONFIG.getEnvironmentHash() != self.getEnvironmentHash()
 
     def getEnvironmentHash(self):
