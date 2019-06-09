@@ -47,4 +47,4 @@ class EnvyState:
             f.write(newID)
 
     def getContainerFile(self):
-        return "{}/envy_container".format(self.directory)
+        return "{}/container.dockerid".format(self.directory)

@@ -48,6 +48,7 @@ class ContainerFinder:
         """
         container = self.findAndEnsureStopped()
         container.remove()
+        ENVY_STATE.setContainerID("")
 
     def findContainer(self):
         """ Find the container to use for this project. You probably want the findAndEnsure* methods instead.
@@ -63,7 +64,10 @@ class ContainerFinder:
                     return container
 
         imageId = self.imageFinder.findImage()  # TODO are we leaving dangling images
+
         logging.info("Creating new container for: %s", imageId)
+        print("Creating ENVy container")
+
         projectMount = Mount("/project", str(ENVY_CONFIG_FILE_PATH.parent), type="bind")
         dockerSocketMount = Mount(
             "/var/run/docker.sock", "/var/run/docker.sock", type="bind"

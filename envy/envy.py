@@ -15,7 +15,9 @@ def upCommand(_args, _unknownArgs):
 
     if ENVY_STATE.didEnvironmentChange():
         print("Detected change in config environment. Re-creating container.")
-        containerFinder.destroyContainer()  # TODO this creates the container if not found
+        containerFinder.destroyContainer()
+        # TODO this creates the container if not found, then immediately destroys it
+        # TODO this does not remove the image
 
     containerFinder.findAndEnsureRunning()
     print("Envy environment successfully running.")

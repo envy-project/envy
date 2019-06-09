@@ -20,7 +20,9 @@ class EnvyConfig:
         ).hexdigest()
 
     def getFullHash(self):
-        return hashlib.md5(json.dumps(self.data, sort_keys=True).encode("utf-8")).hexdigest()
+        return hashlib.md5(
+            json.dumps(self.data, sort_keys=True).encode("utf-8")
+        ).hexdigest()
 
     def getNativeDependencies(self):
         return self.data["environment"]["dependencies"]["native"]

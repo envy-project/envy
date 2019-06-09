@@ -30,6 +30,9 @@ class ImageFinder:
         for image in images:
             if expectedTag in image.tags:
                 return image.id
+
+        print("Building ENVy environment image")
+
         # TODO: Use the correct image creator based on the config file!
         aic = AptImageCreator(self.docker)
 
