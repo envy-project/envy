@@ -1,7 +1,8 @@
 import os
 
-from .directory import createDirectoryIfNotExists
-from .environment_hash import didEnvironmentChange, getHash, setHash
-from .container import getContainerID, setContainerID
+from .directory import createDirectoryIfNotExists, ENVY_STATE_PATH
+from .envy_state import EnvyState
 
 createDirectoryIfNotExists()
+
+ENVY_STATE = EnvyState(ENVY_STATE_PATH)

@@ -5,14 +5,14 @@ import docker
 import dockerpty
 
 from envy.lib.config import ENVY_CONFIG
-from envy.lib.state import didEnvironmentChange
+from envy.lib.state import ENVY_STATE
 from envy.lib.docker_helpers.container_finder import ContainerFinder
 
 
 def upCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
     containerFinder = ContainerFinder(dockerClient)
-    if didEnvironmentChange():
+    if ENVY_STATE.didEnvironmentChange():
         print("Detected change in config environment. Re-creating container.")
         containerFinder.destroyContainer()
     containerFinder.findAndEnsureRunning()
