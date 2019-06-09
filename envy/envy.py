@@ -10,12 +10,12 @@ from envy.lib.docker_helpers.container_finder import ContainerFinder
 
 
 def upCommand(_args, _unknownArgs):
-    CLIENT = docker.from_env()
-    T = ContainerFinder(CLIENT)
+    dockerClient = docker.from_env()
+    containerFinder = ContainerFinder(dockerClient)
     if didEnvironmentChange():
         print("Detected change in config environment. Re-creating container.")
-        T.destroyContainer()
-    T.findAndEnsureRunning()
+        containerFinder.destroyContainer()
+    containerFinder.findAndEnsureRunning()
     print("Envy environment successfully running.")
 
 
