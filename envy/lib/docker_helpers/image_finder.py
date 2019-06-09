@@ -18,6 +18,9 @@ class ImageFinder:
     def destroyImage(self):
         """ Destroy the image, if it existed """
         imgId = self.findImage()
+        if imgId is None:
+            return
+
         self.docker.images.remove(image=imgId)
 
     def findImage(self):
@@ -30,6 +33,12 @@ class ImageFinder:
         for image in images:
             if expectedTag in image.tags:
                 return image.id
+        return None
+
+    def findOrCreateImage(self):
+        existingImage = self.findImage()
+        if existingImage is not None:
+            return existingImage
 
         print("Building ENVy environment image")
 

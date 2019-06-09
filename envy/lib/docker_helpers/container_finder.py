@@ -29,7 +29,7 @@ class ContainerFinder:
                 The docker container object, in a running state
         """
         container = self.findContainer()
-        if "running" not in container.status:
+        if container is not None and "running" not in container.status:
             container.start()
         return container
 
@@ -39,7 +39,7 @@ class ContainerFinder:
                 The docker container object, in a stopped state
         """
         container = self.findContainer()
-        if "running" in container.status:
+        if container is not None and "running" in container.status:
             container.kill()
         return container
 
@@ -47,6 +47,9 @@ class ContainerFinder:
         """ Find the container for this project and destroy it
         """
         container = self.findAndEnsureStopped()
+        if container is None:
+            return
+
         container.remove()
         ENVY_STATE.setContainerID("")
 
@@ -62,8 +65,15 @@ class ContainerFinder:
             for container in containers:
                 if container.id == expectedContainerID:
                     return container
+        return None
 
-        imageId = self.imageFinder.findImage()  # TODO are we leaving dangling images
+    def findOrCreateContainer(self):
+        existingContainer = self.findContainer()
+        if existingContainer is not None:
+            return existingContainer
+
+        # TODO are we leaving dangling images
+        imageId = self.imageFinder.findOrCreateImage()
 
         logging.info("Creating new container for: %s", imageId)
         print("Creating ENVy container")

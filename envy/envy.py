@@ -20,6 +20,7 @@ def upCommand(_args, _unknownArgs):
         # TODO this creates the container if not found, then immediately destroys it
         # TODO this does not remove the image
 
+    containerFinder.findOrCreateContainer()
     containerFinder.findAndEnsureRunning()
 
     ENVY_STATE.updateEnvironmentHash()
