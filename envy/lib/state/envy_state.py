@@ -25,6 +25,9 @@ class EnvyState:
         with open(path, "w") as f:
             f.write(newHash)
 
+    def updateEnvironmentHash(self):
+        self.setEnvironmentHash(ENVY_CONFIG.getEnvironmentHash())
+
     def getEnvironmentFile(self):
         return "{}/environment.md5".format(self.directory)
 

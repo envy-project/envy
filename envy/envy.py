@@ -12,9 +12,11 @@ from envy.lib.docker_helpers.container_finder import ContainerFinder
 def upCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
     containerFinder = ContainerFinder(dockerClient)
+
     if ENVY_STATE.didEnvironmentChange():
         print("Detected change in config environment. Re-creating container.")
-        containerFinder.destroyContainer()
+        containerFinder.destroyContainer()  # TODO this creates the container if not found
+
     containerFinder.findAndEnsureRunning()
     print("Envy environment successfully running.")
 
@@ -76,6 +78,8 @@ def main():
         args.func(args, unknown)
     else:
         parser.print_help()
+
+    ENVY_STATE.updateEnvironmentHash()
 
 
 if __name__ == "__main__":

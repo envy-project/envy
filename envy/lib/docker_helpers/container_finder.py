@@ -2,6 +2,7 @@ import logging
 from docker.types import Mount
 
 from envy.lib.config import ENVY_CONFIG_FILE_PATH, ENVY_CONFIG
+from envy.lib.state import ENVY_STATE
 from envy.lib.docker_helpers.image_finder import ImageFinder
 
 
@@ -19,7 +20,7 @@ class ContainerFinder:
         self.docker = docker
         self.imageFinder = ImageFinder(docker)
 
-    def expectedLabel(self):
+    def generateContainerName(self):
         return "envy-" + ENVY_CONFIG.getEnvironmentHash() + "-container"
 
     def findAndEnsureRunning(self):
@@ -53,12 +54,15 @@ class ContainerFinder:
             Returns:
                 Docker container object in an undefined state
         """
-        expectedLabel = self.expectedLabel()
-        containers = self.docker.containers.list(all=True)
-        for container in containers:
-            if container.name == expectedLabel:
-                return container
-        imageId = self.imageFinder.findImage()
+        expectedContainerID = ENVY_STATE.getContainerID()
+
+        if expectedContainerID:
+            containers = self.docker.containers.list(all=True)
+            for container in containers:
+                if container.id == expectedContainerID:
+                    return container
+
+        imageId = self.imageFinder.findImage()  # TODO are we leaving dangling images
         logging.info("Creating new container for: %s", imageId)
         projectMount = Mount("/project", str(ENVY_CONFIG_FILE_PATH.parent), type="bind")
         dockerSocketMount = Mount(
@@ -67,7 +71,9 @@ class ContainerFinder:
         container = self.docker.containers.create(
             imageId,
             "tail -f /dev/null",
-            name=expectedLabel,
+            name=self.generateContainerName(),
             mounts=[projectMount, dockerSocketMount],
         )
+
+        ENVY_STATE.setContainerID(container.id)
         return container
