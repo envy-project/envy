@@ -46,7 +46,6 @@ class ImageFinder:
         aic = AptImageCreator(self.docker)
 
         # TODO: packages need to be made more portable
-        # TODO: this expects "native" to have a list of strings but it's a list of dicts
         return aic.createImage(
             ENVY_CONFIG.getNativeDependencies(), ENVY_CONFIG.getExtraExecutables()
         )

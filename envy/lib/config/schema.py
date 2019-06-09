@@ -2,7 +2,6 @@ import sys
 
 from schema import Schema, SchemaError, Optional, Or
 
-# TODO add schema information for environment stuff
 _SCHEMA = Schema(
     {
         Optional("environment", default={}): {
