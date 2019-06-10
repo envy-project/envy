@@ -23,8 +23,8 @@ _SCHEMA = Schema(
 )
 
 
-def validateSchema(rawData):
+def validate(raw_data):
     try:
-        return _SCHEMA.validate(rawData)
+        return _SCHEMA.validate(raw_data)
     except SchemaError as e:
         sys.exit(e.code)  # TODO shouldn't exit here

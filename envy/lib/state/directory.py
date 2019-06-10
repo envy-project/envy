@@ -10,7 +10,7 @@ ENVY_STATE_PATH = "{}/{}".format(
 )
 
 
-def createDirectoryIfNotExists():
+def create_directory_if_not_exists():
     if not os.path.isdir(ENVY_STATE_PATH):
         os.mkdir(ENVY_STATE_PATH)
         Path("{}/DO_NOT_COMMIT".format(ENVY_STATE_PATH)).touch()

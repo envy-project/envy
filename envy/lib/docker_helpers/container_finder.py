@@ -18,75 +18,77 @@ class ContainerFinder:
 
     def __init__(self, docker):
         self.docker = docker
-        self.imageFinder = ImageFinder(docker)
+        self.image_finder = ImageFinder(docker)
 
-    def generateContainerName(self):
-        return "envy-" + ENVY_CONFIG.getEnvironmentHash() + "-container"
+    def generate_container_name(self):
+        return "envy-" + ENVY_CONFIG.get_environment_hash() + "-container"
 
-    def findAndEnsureRunning(self):
+    def find_and_ensure_running(self):
         """ Find a container and ensure that the container is running
             Returns:
                 The docker container object, in a running state
         """
-        container = self.findContainer()
+        container = self.find_container()
         if container is not None and "running" not in container.status:
             container.start()
         return container
 
-    def findAndEnsureStopped(self):
+    def find_and_ensure_stopped(self):
         """ Find a container and ensure that the container is stopped
             Returns:
                 The docker container object, in a stopped state
         """
-        container = self.findContainer()
+        container = self.find_container()
         if container is not None and "running" in container.status:
             container.kill()
         return container
 
-    def destroyContainer(self):
+    def destroy_container(self):
         """ Find the container for this project and destroy it
         """
-        container = self.findAndEnsureStopped()
+        container = self.find_and_ensure_stopped()
         if container is None:
             return
 
         container.remove()
-        ENVY_STATE.setContainerID("")
+        ENVY_STATE.set_container_id("")
 
-    def findContainer(self):
+    def find_container(self):
         """ Find the container to use for this project. You probably want the findAndEnsure* methods instead.
             Returns:
                 Docker container object in an undefined state
         """
-        expectedContainerID = ENVY_STATE.getContainerID()
+        expected_container_id = ENVY_STATE.get_container_id()
 
-        if expectedContainerID:
+        if expected_container_id:
             containers = self.docker.containers.list(all=True)
             for container in containers:
-                if container.id == expectedContainerID:
+                if container.id == expected_container_id:
                     return container
         return None
 
-    def findOrCreateContainer(self):
-        existingContainer = self.findContainer()
-        if existingContainer is not None:
-            return existingContainer
+    def find_or_create_container(self):
+        existing_container = self.find_container()
+        if existing_container is not None:
+            return existing_container
 
-        imageId = self.imageFinder.findOrCreateImage()
+        image_id = self.image_finder.find_or_create_image()
 
-        logging.info("Creating new container for: %s", imageId)
+        logging.info("Creating new container for: %s", image_id)
         print("Creating ENVy container")
 
-        projectMount = Mount("/project", str(ENVY_CONFIG_FILE_PATH.parent), type="bind")
-        dockerSocketMount = Mount(
+        project_mount = Mount(
+            "/project", str(ENVY_CONFIG_FILE_PATH.parent), type="bind"
+        )
+        docker_socket_mount = Mount(
             "/var/run/docker.sock", "/var/run/docker.sock", type="bind"
         )
         container = self.docker.containers.create(
-            imageId,
+            image_id,
             "tail -f /dev/null",
-            name=self.generateContainerName(),
-            mounts=[projectMount, dockerSocketMount],
+            name=self.generate_container_name(),
+            mounts=[project_mount, docker_socket_mount],
         )
 
-        ENVY_STATE.setContainerID(container.id)
+        ENVY_STATE.set_container_id(container.id)
         return container

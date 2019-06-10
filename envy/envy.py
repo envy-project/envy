@@ -11,81 +11,81 @@ from envy.lib.docker_helpers.container_finder import ContainerFinder
 from envy.lib.docker_helpers.image_finder import ImageFinder
 
 
-def upCommand(_args, _unknownArgs):
-    dockerClient = docker.from_env()
-    connectionTester = ConnectionTester(dockerClient)
-    containerFinder = ContainerFinder(dockerClient)
-    imageFinder = ImageFinder(dockerClient)
+def up_command(_args, _unknow_args):
+    docker_client = docker.from_env()
+    connection_tester = ConnectionTester(docker_client)
+    container_finder = ContainerFinder(docker_client)
+    image_finder = ImageFinder(docker_client)
 
-    if not connectionTester.success():
-        connectionTester.printErr()
+    if not connection_tester.ok():
+        connection_tester.print_err()
         return
 
-    if ENVY_STATE.didEnvironmentChange():
+    if ENVY_STATE.did_environment_chane():
         print("Detected change in config environment. Re-creating container.")
-        containerFinder.destroyContainer()
-        imageFinder.destroyImage()
+        container_finder.destroy_container()
+        image_finder.destroy_image()
 
-    containerFinder.findOrCreateContainer()
-    containerFinder.findAndEnsureRunning()
+    container_finder.find_or_create_container()
+    container_finder.find_and_ensure_running()
 
-    ENVY_STATE.updateEnvironmentHash()
+    ENVY_STATE.update_environment_hash()
     print("ENVy environment successfully running.")
 
 
-def shellCommand(_args, _unknownArgs):
-    dockerClient = docker.from_env()
-    connectionTester = ConnectionTester(dockerClient)
-    containerFinder = ContainerFinder(dockerClient)
+def shell_command(_args, _unknown_args):
+    docker_client = docker.from_env()
+    connection_tester = ConnectionTester(docker_client)
+    container_finder = ContainerFinder(docker_client)
 
-    if not connectionTester.success():
-        connectionTester.printErr()
+    if not connection_tester.ok():
+        connection_tester.print_err()
         return
 
-    container = containerFinder.findContainer()
+    container = container_finder.find_container()
 
-    dockerpty.exec_command(dockerClient, container.id, "/bin/bash")
+    dockerpty.exec_command(docker_client, container.id, "/bin/bash")
 
 
-def downCommand(_args, _unknownArgs):
-    dockerClient = docker.from_env()
-    connectionTester = ConnectionTester(dockerClient)
-    containerFinder = ContainerFinder(dockerClient)
+def down_command(_args, _unknown_args):
+    docker_client = docker.from_env()
+    connection_tester = ConnectionTester(docker_client)
+    container_finder = ContainerFinder(docker_client)
 
-    if not connectionTester.success():
-        connectionTester.printErr()
+    if not connection_tester.ok():
+        connection_tester.print_err()
         return
 
-    containerFinder.findAndEnsureStopped()
+    container_finder.find_and_ensure_stopped()
     print("ENVy environment stopped")
 
 
-def nukeCommand(_args, _unknownArgs):
-    dockerClient = docker.from_env()
-    connectionTester = ConnectionTester(dockerClient)
-    containerFinder = ContainerFinder(dockerClient)
-    imageFinder = ImageFinder(dockerClient)
+def nuke_command(_args, _unknown_args):
+    docker_client = docker.from_env()
+    connection_tester = ConnectionTester(docker_client)
+    container_finder = ContainerFinder(docker_client)
+    image_finder = ImageFinder(docker_client)
 
-    if not connectionTester.success():
-        connectionTester.printErr()
+    if not connection_tester.ok():
+        connection_tester.print_err()
         return
 
-    containerFinder.destroyContainer()
-    imageFinder.destroyImage()
+    container_finder.destroy_container()
+    image_finder.destroy_image()
     ENVY_STATE.nuke()
     print("ENVy environment destroyed")
 
 
-def statusCommand(_args, _unknownArgs):
-    dockerClient = docker.from_env()
-    connectionTester = ConnectionTester(dockerClient)
-    containerFinder = ContainerFinder(dockerClient)
+def status_command(_args, _unknown_args):
+    docker_client = docker.from_env()
+    connection_tester = ConnectionTester(docker_client)
+    container_finder = ContainerFinder(docker_client)
 
-    if not connectionTester.success():
-        connectionTester.printErr()
+    if not connection_tester.ok():
+        connection_tester.print_err()
         return
 
-    container = containerFinder.findContainer()
+    container = container_finder.find_container()
 
     if container is None:
         print(
@@ -97,62 +97,62 @@ def statusCommand(_args, _unknownArgs):
         print("ENVy environment is running!")
 
 
-def runScript(_args, unknownArgs, script):
-    dockerClient = docker.from_env()
-    connectionTester = ConnectionTester(dockerClient)
-    containerFinder = ContainerFinder(dockerClient)
+def run_script(_args, unknown_args, script):
+    docker_client = docker.from_env()
+    connection_tester = ConnectionTester(docker_client)
+    container_finder = ContainerFinder(docker_client)
 
-    if not connectionTester.success():
-        connectionTester.printErr()
+    if not connection_tester.ok():
+        connection_tester.print_err()
         return
 
-    container = containerFinder.findAndEnsureRunning()
+    container = container_finder.find_and_ensure_running()
 
-    command = "/bin/bash -c '{} {}'".format(script, " ".join(unknownArgs))
-    dockerpty.exec_command(dockerClient, container.id, command)
+    command = "/bin/bash -c '{} {}'".format(script, " ".join(unknown_args))
+    dockerpty.exec_command(docker_client, container.id, command)
 
 
-def buildCustomCommandParser(subparsers, name, info):
+def build_custom_command_parser(subparsers, name, info):
     parser_custom = subparsers.add_parser(
         name, help=info.get("help"), description=info.get("description")
     )
     parser_custom.set_defaults(
-        func=lambda args, unknownArgs: runScript(args, unknownArgs, info["script"])
+        func=lambda args, unknown_args: run_script(args, unknown_args, info["script"])
     )
 
 
-def getParser(actions):
+def get_parser(actions):
     parser = argparse.ArgumentParser(description="ENVY DESCRIPTION TODO")
     subparsers = parser.add_subparsers(dest="subparser_name")
     # Create 'up' parser
-    parserUp = subparsers.add_parser("up", help="ENVY UP HELP")
-    parserUp.set_defaults(func=upCommand)
+    parser_up = subparsers.add_parser("up", help="ENVY UP HELP")
+    parser_up.set_defaults(func=up_command)
 
     # Create 'shell' parser
-    parserShell = subparsers.add_parser("shell", help="ENVY SHELL HELP")
-    parserShell.set_defaults(func=shellCommand)
+    parser_shell = subparsers.add_parser("shell", help="ENVY SHELL HELP")
+    parser_shell.set_defaults(func=shell_command)
 
     # Create 'down' parser
-    parserDown = subparsers.add_parser("down", help="ENVY DOWN HELP")
-    parserDown.set_defaults(func=downCommand)
+    parser_down = subparsers.add_parser("down", help="ENVY DOWN HELP")
+    parser_down.set_defaults(func=down_command)
 
     # Create 'nuke' parser
-    parserNuke = subparsers.add_parser("nuke", help="ENVY NUKE HELP")
-    parserNuke.set_defaults(func=nukeCommand)
+    parser_nuke = subparsers.add_parser("nuke", help="ENVY NUKE HELP")
+    parser_nuke.set_defaults(func=nuke_command)
 
     # Create 'status' parser
-    parserStatus = subparsers.add_parser("status", help="ENVY STATUS HELP")
-    parserStatus.set_defaults(func=statusCommand)
+    parser_status = subparsers.add_parser("status", help="ENVY STATUS HELP")
+    parser_status.set_defaults(func=status_command)
 
     # Create parsers for arbitrary custom commands
     for action in actions:
-        buildCustomCommandParser(subparsers, action["name"], action)
+        build_custom_command_parser(subparsers, action["name"], action)
 
     return parser
 
 
 def main():
-    parser = getParser(ENVY_CONFIG.getActions())
+    parser = get_parser(ENVY_CONFIG.get_actions())
     args, unknown = parser.parse_known_args()
     if args.subparser_name:
         args.func(args, unknown)

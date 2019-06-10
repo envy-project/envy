@@ -11,13 +11,13 @@ class EnvyState:
     def nuke(self):
         shutil.rmtree(self.directory)
 
-    def didEnvironmentChange(self):
-        if self.getEnvironmentHash() is None:
+    def did_environment_chane(self):
+        if self.get_environment_hash() is None:
             return False
-        return ENVY_CONFIG.getEnvironmentHash() != self.getEnvironmentHash()
+        return ENVY_CONFIG.get_environment_hash() != self.get_environment_hash()
 
-    def getEnvironmentHash(self):
-        path = self.getEnvironmentFile()
+    def get_environment_hash(self):
+        path = self.get_environment_file()
 
         if os.path.isfile(path):
             with open(path, "r") as f:
@@ -25,20 +25,20 @@ class EnvyState:
         else:
             return None
 
-    def setEnvironmentHash(self, newHash):
-        path = self.getEnvironmentFile()
+    def set_environment_hash(self, new_hash):
+        path = self.get_environment_file()
 
         with open(path, "w") as f:
-            f.write(newHash)
+            f.write(new_hash)
 
-    def updateEnvironmentHash(self):
-        self.setEnvironmentHash(ENVY_CONFIG.getEnvironmentHash())
+    def update_environment_hash(self):
+        self.set_environment_hash(ENVY_CONFIG.get_environment_hash())
 
-    def getEnvironmentFile(self):
+    def get_environment_file(self):
         return "{}/environment.md5".format(self.directory)
 
-    def getContainerID(self):
-        path = self.getContainerFile()
+    def get_container_id(self):
+        path = self.get_container_file()
 
         if os.path.isfile(path):
             with open(path, "r") as f:
@@ -46,17 +46,17 @@ class EnvyState:
         else:
             return None
 
-    def setContainerID(self, newID):
-        path = self.getContainerFile()
+    def set_container_id(self, new_id):
+        path = self.get_container_file()
 
         with open(path, "w") as f:
-            f.write(newID)
+            f.write(new_id)
 
-    def getContainerFile(self):
+    def get_container_file(self):
         return "{}/container.dockerid".format(self.directory)
 
-    def getImageID(self):
-        path = self.getImageFile()
+    def get_image_id(self):
+        path = self.get_image_file()
 
         if os.path.isfile(path):
             with open(path, "r") as f:
@@ -64,11 +64,11 @@ class EnvyState:
         else:
             return None
 
-    def setImageID(self, newID):
-        path = self.getImageFile()
+    def set_image_id(self, new_id):
+        path = self.get_image_file()
 
         with open(path, "w") as f:
-            f.write(newID)
+            f.write(new_id)
 
-    def getImageFile(self):
+    def get_image_file(self):
         return "{}/image.dockerid".format(self.directory)

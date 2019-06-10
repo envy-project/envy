@@ -19,28 +19,28 @@ class ImageCreator(ABC):
     def __init__(self, docker):
         self.docker = docker
 
-    def buildImageTag(self):
-        return "envy-{}".format(ENVY_CONFIG.getEnvironmentHash())
+    def build_image_tag(self):
+        return "envy-{}".format(ENVY_CONFIG.get_environment_hash())
 
-    def createImage(self, packages, nativeExecutables=None):
+    def create_image(self, packages, native_executables=None):
         """ Create a docker image from a set of packages and executables.
             NOTE: currently not validating either packages or executables
             Args:
                 packages (list<string>): A list of packages to install
-                nativeExecutables(list<ConfigExecFile>): A list of ConfigExecFiles to install into the image.
+                native_executables(list<ConfigExecFile>): A list of ConfigExecFiles to install into the image.
             Returns:
                 string: the Docker image ID
         """
-        # TODO: validate existance of nativeExecutables
-        dockerfile = self.buildDockerfile(packages, nativeExecutables)
-        tarBytes = self.buildTarballBytes(dockerfile, nativeExecutables)
+        # TODO: validate existance of native_executables
+        dockerfile = self.build_dockerfile(packages, native_executables)
+        tar_bytes = self.build_tarball_bytes(dockerfile, native_executables)
         image, logs = self.docker.images.build(
-            custom_context=True, tag=self.buildImageTag(), rm=True, fileobj=tarBytes
+            custom_context=True, tag=self.build_image_tag(), rm=True, fileobj=tar_bytes
         )
         logging.info(logs)
         return image.id
 
-    def buildTarballBytes(self, dockerfile, executables=None):
+    def build_tarball_bytes(self, dockerfile, executables=None):
         """ Build a tarball BytesIO with the Dockerfile, and include all passed-in executables
             NOTE: no validation is performed for malicious content!
             Args:
@@ -49,43 +49,43 @@ class ImageCreator(ABC):
             Returns:
                 BytesIO: A bytes IO object that represents an uncompressed tarball, ready to be passed to Docker.
         """
-        tarBytes = io.BytesIO()
-        tarArchive = tarfile.open(fileobj=tarBytes, mode="x")
+        tar_bytes = io.BytesIO()
+        tar_archive = tarfile.open(fileobj=tar_bytes, mode="x")
 
         # Write the Dockerfile
-        dockerData = dockerfile.encode("utf8")
+        docker_data = dockerfile.encode("utf8")
         info = tarfile.TarInfo(name="Dockerfile")
-        info.size = len(dockerData)
-        tarArchive.addfile(tarinfo=info, fileobj=io.BytesIO(dockerData))
+        info.size = len(docker_data)
+        tar_archive.addfile(tarinfo=info, fileobj=io.BytesIO(docker_data))
 
         # If they exist, add our executables
         if executables:
             for execute in executables:
                 info = tarfile.TarInfo(name=execute.filename)
                 info.size = len(execute.bytes)
-                tarArchive.addfile(tarinfo=info, fileobj=io.BytesIO(execute.bytes))
+                tar_archive.addfile(tarinfo=info, fileobj=io.BytesIO(execute.bytes))
         # Finish the tar archive
-        tarArchive.close()
+        tar_archive.close()
         # Restore the byte buffer
-        tarBytes.seek(0)
-        return tarBytes
+        tar_bytes.seek(0)
+        return tar_bytes
 
-    def buildDockerfile(self, packages, nativeExecutables=None):
+    def build_dockerfile(self, packages, native_executables=None):
         """ Create a Dockerfile that will result in a reasonable number of layers.
             NOTE: no validation performed on package names or native executables
             Args:
                 packages (list<string>): The packages you want to install
-                nativeExecutables (list<string>): The native executables you want to run to provision the image
+                native_executables (list<string>): The native executables you want to run to provision the image
             Returns:
                 string: the string representation of the Dockerfile
         """
-        dFile = "FROM " + self.baseImage() + "\n"
-        dFile += "RUN " + self.getPackageString(packages) + "\n"
-        if nativeExecutables:
-            for execute in nativeExecutables:
+        d_file = "FROM " + self.base_image() + "\n"
+        d_file += "RUN " + self.get_package_string(packages) + "\n"
+        if native_executables:
+            for execute in native_executables:
                 execute = execute.filename
-                dFile += "COPY " + execute + " /install/" + execute + "\n"
-                dFile += (
+                d_file += "COPY " + execute + " /install/" + execute + "\n"
+                d_file += (
                     "RUN chmod a+x /install/"
                     + execute
                     + " && /install/"
@@ -94,12 +94,12 @@ class ImageCreator(ABC):
                     + execute
                     + "\n"
                 )
-        return dFile
+        return d_file
 
     @abstractmethod
-    def baseImage(self):
+    def base_image(self):
         pass
 
     @abstractmethod
-    def getPackageString(self, packages):
+    def get_package_string(self, packages):
         pass

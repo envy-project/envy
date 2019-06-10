@@ -8,27 +8,27 @@ class ConfigExecFile:
 
 
 class FileDownloadError(Exception):
-    def __init__(self, requestsError):
+    def __init__(self, requests_error):
         super(FileDownloadError, self).__init__()
-        self.requestsError = requestsError
+        self.requests_error = requests_error
 
 
-def resolveFiles(fileObjects):
+def resolve_files(file_objects):
     """ Turn file objects from the config into "real" objects with Byte strings. Currently only supports URL format
         Args:
-            fileObjects (list<dict>): fileObjects from the config
+            file_objects (list<dict>): file_objects from the config
         Returns:
             list<ConfigExecFile>: List of executable files to run in the image
         Raises:
             FileDownloadError: When a file fails to download for some reason. Contains the Requests error.
     """
-    if not fileObjects:
+    if not file_objects:
         return None
-    returnedList = []
-    for obj in fileObjects:
+    returned_list = []
+    for obj in file_objects:
         try:
             r = requests.get(obj["url"])
-            returnedList.append(ConfigExecFile(obj["filename"], r.content))
+            returned_list.append(ConfigExecFile(obj["filename"], r.content))
         except requests.exceptions.RequestException as e:
             raise FileDownloadError(e)
-    return returnedList
+    return returned_list

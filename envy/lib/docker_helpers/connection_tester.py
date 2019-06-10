@@ -8,9 +8,9 @@ class ConnectionTester:
         self.result = False
         self.message = ""
 
-        self.test()
+        self.__test()
 
-    def test(self):
+    def __test(self):
         try:
             if self.client.ping():
                 self.result = True
@@ -31,11 +31,11 @@ class ConnectionTester:
         except Exception as e:  # pylint: disable=W0703
             self.message = str(e)
 
-    def success(self):
+    def ok(self):
         return self.result
 
     def reason(self):
         return self.message
 
-    def printErr(self):
+    def print_err(self):
         print(self.message)

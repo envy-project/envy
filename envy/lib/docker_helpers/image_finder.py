@@ -1,7 +1,7 @@
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import ENVY_STATE
 from envy.lib.docker_helpers.apt_image_creator import AptImageCreator
-from envy.lib.file_downloader import resolveFiles
+from envy.lib.file_downloader import resolve_files
 
 
 class ImageFinder:
@@ -17,30 +17,30 @@ class ImageFinder:
     def __init__(self, docker):
         self.docker = docker
 
-    def destroyImage(self):
+    def destroy_image(self):
         """ Destroy the image, if it existed """
-        imgId = self.findImage()
-        if imgId is None:
+        image_id = self.find_image()
+        if image_id is None:
             return
 
-        self.docker.images.remove(image=imgId)
+        self.docker.images.remove(image=image_id)
 
-    def findImage(self):
+    def find_image(self):
         """ Create a docker image
             Returns:
                 string: The Docker image ID
         """
-        expectedID = ENVY_STATE.getImageID()
+        expected_id = ENVY_STATE.get_image_id()
         images = self.docker.images.list()
         for image in images:
-            if image.id == expectedID:
+            if image.id == expected_id:
                 return image.id
         return None
 
-    def findOrCreateImage(self):
-        existingImage = self.findImage()
-        if existingImage is not None:
-            return existingImage
+    def find_or_create_image(self):
+        existing_image = self.find_image()
+        if existing_image is not None:
+            return existing_image
 
         print("Building ENVy environment image")
 
@@ -48,11 +48,11 @@ class ImageFinder:
         aic = AptImageCreator(self.docker)
 
         # TODO: packages need to be made more portable
-        image_id = aic.createImage(
-            ENVY_CONFIG.getNativeDependencies(),
-            resolveFiles(ENVY_CONFIG.getExtraExecutables()),
+        image_id = aic.create_image(
+            ENVY_CONFIG.get_native_dependencies(),
+            resolve_files(ENVY_CONFIG.get_extra_executables()),
         )
 
-        ENVY_STATE.setImageID(image_id)
+        ENVY_STATE.set_image_id(image_id)
 
         return image_id

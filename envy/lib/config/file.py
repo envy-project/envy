@@ -3,12 +3,12 @@ import pathlib
 _CONFIG_FILE_NAME = ".envyfile"
 
 
-def findConfigFile():
-    currentPath = pathlib.Path.cwd()
+def find_config_file():
+    current_path = pathlib.Path.cwd()
     while True:
-        configPath = currentPath / _CONFIG_FILE_NAME
-        if configPath.exists() and configPath.is_file():
-            return configPath
-        if currentPath == currentPath.parent:
+        config_path = current_path / _CONFIG_FILE_NAME
+        if config_path.exists() and config_path.is_file():
+            return config_path
+        if current_path == current_path.parent:
             break
-        currentPath = currentPath.parent
+        current_path = current_path.parent
