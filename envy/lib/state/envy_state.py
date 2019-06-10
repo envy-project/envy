@@ -5,18 +5,33 @@ from envy.lib.config import ENVY_CONFIG
 
 
 class EnvyState:
-    def __init__(self, dirPath):
-        self.directory = dirPath
+    """ Manages ENVy's state through some files in the project's root directory
+        Currently tracking:
+            Environment hash: a hash of ENVy's environment config
+            Container ID: the current ENVy environment container
+            Image ID: the current ENVy environment image
+    """
+
+    def __init__(self, dir_path):
+        self.directory = dir_path
 
     def nuke(self):
+        """ Removes the state directory
+        """
         shutil.rmtree(self.directory)
 
-    def did_environment_change(self):
+    def did_environment_change(self) -> bool:
+        """ Compares the state's environment hash against the current config's environment hash.
+            Returns True if they don't match.
+
+        Returns:
+            bool -- The result
+        """
         if self.get_environment_hash() is None:
             return False
         return ENVY_CONFIG.get_environment_hash() != self.get_environment_hash()
 
-    def get_environment_hash(self):
+    def get_environment_hash(self) -> str:
         path = self.__get_environment_file()
 
         if os.path.isfile(path):

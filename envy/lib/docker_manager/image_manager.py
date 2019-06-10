@@ -30,7 +30,7 @@ class ImageManager:
         return ImageManager(docker_client, image_id)
 
     ### Image Management ###
-    def __init__(self, docker_client: DockerClient, image_id: str) -> ImageManager:
+    def __init__(self, docker_client: DockerClient, image_id: str):
         """ Creates an image manager for the given image id
 
         Arguments:
