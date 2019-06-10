@@ -31,10 +31,10 @@ class ConnectionTester:
         except Exception as e:  # pylint: disable=W0703
             self.message = str(e)
 
-    def ok(self):
+    def ok(self) -> bool:
         return self.result
 
-    def reason(self):
+    def reason(self) -> str:
         return self.message
 
     def print_err(self):
