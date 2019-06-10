@@ -28,7 +28,7 @@ class ConnectionTester:
                 self.message = "HTTP error (e.status_code)."
         except RequestsConnectionError as e:
             self.message = "Connection refused. Is docker running?"
-        except Exception as e: # pylint: disable=W0703
+        except Exception as e:  # pylint: disable=W0703
             self.message = str(e)
 
     def success(self):
@@ -36,3 +36,6 @@ class ConnectionTester:
 
     def reason(self):
         return self.message
+
+    def printErr(self):
+        print(self.message)

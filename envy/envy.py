@@ -10,6 +10,7 @@ from envy.lib.docker_helpers.connection_tester import ConnectionTester
 from envy.lib.docker_helpers.container_finder import ContainerFinder
 from envy.lib.docker_helpers.image_finder import ImageFinder
 
+
 def upCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
     connectionTester = ConnectionTester(dockerClient)
@@ -17,7 +18,7 @@ def upCommand(_args, _unknownArgs):
     imageFinder = ImageFinder(dockerClient)
 
     if not connectionTester.success():
-        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        connectionTester.printErr()
         return
 
     if ENVY_STATE.didEnvironmentChange():
@@ -38,7 +39,7 @@ def shellCommand(_args, _unknownArgs):
     containerFinder = ContainerFinder(dockerClient)
 
     if not connectionTester.success():
-        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        connectionTester.printErr()
         return
 
     container = containerFinder.findContainer()
@@ -52,7 +53,7 @@ def downCommand(_args, _unknownArgs):
     containerFinder = ContainerFinder(dockerClient)
 
     if not connectionTester.success():
-        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        connectionTester.printErr()
         return
 
     containerFinder.findAndEnsureStopped()
@@ -66,7 +67,7 @@ def nukeCommand(_args, _unknownArgs):
     imageFinder = ImageFinder(dockerClient)
 
     if not connectionTester.success():
-        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        connectionTester.printErr()
         return
 
     containerFinder.destroyContainer()
@@ -75,13 +76,34 @@ def nukeCommand(_args, _unknownArgs):
     print("ENVy environment destroyed")
 
 
+def statusCommand(_args, _unknownArgs):
+    dockerClient = docker.from_env()
+    connectionTester = ConnectionTester(dockerClient)
+    containerFinder = ContainerFinder(dockerClient)
+
+    if not connectionTester.success():
+        connectionTester.printErr()
+        return
+
+    container = containerFinder.findContainer()
+
+    if container is None:
+        print(
+            "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
+        )
+    elif "running" not in container.status:
+        print("ENVy is not running. Run `envy up` to start the ENVy environment.")
+    else:
+        print("ENVy environment is running!")
+
+
 def runScript(_args, unknownArgs, script):
     dockerClient = docker.from_env()
     connectionTester = ConnectionTester(dockerClient)
     containerFinder = ContainerFinder(dockerClient)
 
     if not connectionTester.success():
-        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        connectionTester.printErr()
         return
 
     container = containerFinder.findAndEnsureRunning()
@@ -117,6 +139,10 @@ def getParser(actions):
     # Create 'nuke' parser
     parserNuke = subparsers.add_parser("nuke", help="ENVY NUKE HELP")
     parserNuke.set_defaults(func=nukeCommand)
+
+    # Create 'status' parser
+    parserStatus = subparsers.add_parser("status", help="ENVY STATUS HELP")
+    parserStatus.set_defaults(func=statusCommand)
 
     # Create parsers for arbitrary custom commands
     for action in actions:
