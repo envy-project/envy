@@ -1,4 +1,4 @@
-from envy.lib.docker_helpers.image_creator import ImageCreator
+from .image_creator import ImageCreator
 
 
 class AptImageCreator(ImageCreator):

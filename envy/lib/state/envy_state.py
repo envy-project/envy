@@ -11,13 +11,13 @@ class EnvyState:
     def nuke(self):
         shutil.rmtree(self.directory)
 
-    def did_environment_chane(self):
+    def did_environment_change(self):
         if self.get_environment_hash() is None:
             return False
         return ENVY_CONFIG.get_environment_hash() != self.get_environment_hash()
 
     def get_environment_hash(self):
-        path = self.get_environment_file()
+        path = self.__get_environment_file()
 
         if os.path.isfile(path):
             with open(path, "r") as f:
@@ -26,7 +26,7 @@ class EnvyState:
             return None
 
     def set_environment_hash(self, new_hash):
-        path = self.get_environment_file()
+        path = self.__get_environment_file()
 
         with open(path, "w") as f:
             f.write(new_hash)
@@ -34,11 +34,11 @@ class EnvyState:
     def update_environment_hash(self):
         self.set_environment_hash(ENVY_CONFIG.get_environment_hash())
 
-    def get_environment_file(self):
+    def __get_environment_file(self):
         return "{}/environment.md5".format(self.directory)
 
     def get_container_id(self):
-        path = self.get_container_file()
+        path = self.__get_container_file()
 
         if os.path.isfile(path):
             with open(path, "r") as f:
@@ -47,16 +47,16 @@ class EnvyState:
             return None
 
     def set_container_id(self, new_id):
-        path = self.get_container_file()
+        path = self.__get_container_file()
 
         with open(path, "w") as f:
             f.write(new_id)
 
-    def get_container_file(self):
+    def __get_container_file(self):
         return "{}/container.dockerid".format(self.directory)
 
     def get_image_id(self):
-        path = self.get_image_file()
+        path = self.__get_image_file()
 
         if os.path.isfile(path):
             with open(path, "r") as f:
@@ -65,10 +65,10 @@ class EnvyState:
             return None
 
     def set_image_id(self, new_id):
-        path = self.get_image_file()
+        path = self.__get_image_file()
 
         with open(path, "w") as f:
             f.write(new_id)
 
-    def get_image_file(self):
+    def __get_image_file(self):
         return "{}/image.dockerid".format(self.directory)

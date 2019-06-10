@@ -1,115 +1,115 @@
 #!/usr/bin/python3
 
 import argparse
-import docker
-import dockerpty
 
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import ENVY_STATE
-from envy.lib.docker_helpers.connection_tester import ConnectionTester
-from envy.lib.docker_helpers.container_finder import ContainerFinder
-from envy.lib.docker_helpers.image_finder import ImageFinder
+from envy.lib.docker_manager import DockerManager
+
+STATUS_MSG_NO_CONTAINER = "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
+STATUS_MSG_CONTAINER_STOPPED = (
+    "ENVy is not running. Run `envy up` to start the ENVy environment."
+)
+STATUS_MSG_CONTAINER_READY = "ENVy environment is ready!"
 
 
 def up_command(_args, _unknow_args):
-    docker_client = docker.from_env()
-    connection_tester = ConnectionTester(docker_client)
-    container_finder = ContainerFinder(docker_client)
-    image_finder = ImageFinder(docker_client)
+    docker_manager = DockerManager()
 
-    if not connection_tester.ok():
-        connection_tester.print_err()
+    if not docker_manager.connection_ok():
+        docker_manager.print_connection_err()
         return
 
-    if ENVY_STATE.did_environment_chane():
-        print("Detected change in config environment. Re-creating container.")
-        container_finder.destroy_container()
-        image_finder.destroy_image()
+    if ENVY_STATE.did_environment_change():
+        print("Detected change in config environment. Re-creating ENVy environment.")
+        docker_manager.nuke()
 
-    container_finder.find_or_create_container()
-    container_finder.find_and_ensure_running()
+    container = docker_manager.ensure_container()
+    container.ensure_running()
 
     ENVY_STATE.update_environment_hash()
-    print("ENVy environment successfully running.")
+    print(STATUS_MSG_CONTAINER_READY)
 
 
 def shell_command(_args, _unknown_args):
-    docker_client = docker.from_env()
-    connection_tester = ConnectionTester(docker_client)
-    container_finder = ContainerFinder(docker_client)
+    docker_manager = DockerManager()
 
-    if not connection_tester.ok():
-        connection_tester.print_err()
+    if not docker_manager.connection_ok():
+        docker_manager.print_connection_err()
         return
 
-    container = container_finder.find_container()
+    container = docker_manager.get_container()
 
-    dockerpty.exec_command(docker_client, container.id, "/bin/bash")
+    if not container:
+        print(STATUS_MSG_NO_CONTAINER)
+        return
+
+    if not container.is_running():
+        print(STATUS_MSG_CONTAINER_STOPPED)
+        return
+
+    container.exec("/bin/bash")
 
 
 def down_command(_args, _unknown_args):
-    docker_client = docker.from_env()
-    connection_tester = ConnectionTester(docker_client)
-    container_finder = ContainerFinder(docker_client)
+    docker_manager = DockerManager()
 
-    if not connection_tester.ok():
-        connection_tester.print_err()
+    if not docker_manager.connection_ok():
+        docker_manager.print_connection_err()
         return
 
-    container_finder.find_and_ensure_stopped()
+    container = docker_manager.get_container()
+    if container:
+        container.ensure_stopped()
+
     print("ENVy environment stopped")
 
 
 def nuke_command(_args, _unknown_args):
-    docker_client = docker.from_env()
-    connection_tester = ConnectionTester(docker_client)
-    container_finder = ContainerFinder(docker_client)
-    image_finder = ImageFinder(docker_client)
+    docker_manager = DockerManager()
 
-    if not connection_tester.ok():
-        connection_tester.print_err()
+    if not docker_manager.connection_ok():
+        docker_manager.print_connection_err()
         return
 
-    container_finder.destroy_container()
-    image_finder.destroy_image()
+    docker_manager.nuke()
     ENVY_STATE.nuke()
     print("ENVy environment destroyed")
 
 
 def status_command(_args, _unknown_args):
-    docker_client = docker.from_env()
-    connection_tester = ConnectionTester(docker_client)
-    container_finder = ContainerFinder(docker_client)
+    docker_manager = DockerManager()
 
-    if not connection_tester.ok():
-        connection_tester.print_err()
+    if not docker_manager.connection_ok():
+        docker_manager.print_connection_err()
         return
 
-    container = container_finder.find_container()
+    container = docker_manager.get_container()
 
-    if container is None:
-        print(
-            "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
-        )
-    elif "running" not in container.status:
-        print("ENVy is not running. Run `envy up` to start the ENVy environment.")
+    if not container:
+        print(STATUS_MSG_NO_CONTAINER)
+    elif not container.is_running():
+        print(STATUS_MSG_CONTAINER_STOPPED)
     else:
         print("ENVy environment is running!")
 
 
 def run_script(_args, unknown_args, script):
-    docker_client = docker.from_env()
-    connection_tester = ConnectionTester(docker_client)
-    container_finder = ContainerFinder(docker_client)
+    docker_manager = DockerManager()
 
-    if not connection_tester.ok():
-        connection_tester.print_err()
+    if not docker_manager.connection_ok():
+        docker_manager.print_connection_err()
         return
 
-    container = container_finder.find_and_ensure_running()
+    container = docker_manager.get_container()
 
-    command = "/bin/bash -c '{} {}'".format(script, " ".join(unknown_args))
-    dockerpty.exec_command(docker_client, container.id, command)
+    if not container:
+        print(STATUS_MSG_NO_CONTAINER)
+    elif not container.is_running():
+        print(STATUS_MSG_CONTAINER_STOPPED)
+    else:
+        command = "/bin/bash -c '{} {}'".format(script, " ".join(unknown_args))
+        container.exec(command)
 
 
 def build_custom_command_parser(subparsers, name, info):
