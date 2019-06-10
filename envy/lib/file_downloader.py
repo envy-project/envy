@@ -1,5 +1,6 @@
 import requests
 
+
 class ConfigExecFile:
     def __init__(self, filename, byt):
         self.filename = filename
@@ -10,6 +11,7 @@ class FileDownloadError(Exception):
     def __init__(self, requestsError):
         super(FileDownloadError, self).__init__()
         self.requestsError = requestsError
+
 
 def resolveFiles(fileObjects):
     """ Turn file objects from the config into "real" objects with Byte strings. Currently only supports URL format

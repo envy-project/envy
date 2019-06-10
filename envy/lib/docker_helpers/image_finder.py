@@ -3,6 +3,7 @@ from envy.lib.state import ENVY_STATE
 from envy.lib.docker_helpers.apt_image_creator import AptImageCreator
 from envy.lib.file_downloader import resolveFiles
 
+
 class ImageFinder:
     """ Gets you an image ID for this project - either created fresh or already created and identified by the hash.
         See also: ContainerFinder
@@ -48,7 +49,8 @@ class ImageFinder:
 
         # TODO: packages need to be made more portable
         image_id = aic.createImage(
-            ENVY_CONFIG.getNativeDependencies(), resolveFiles(ENVY_CONFIG.getExtraExecutables())
+            ENVY_CONFIG.getNativeDependencies(),
+            resolveFiles(ENVY_CONFIG.getExtraExecutables()),
         )
 
         ENVY_STATE.setImageID(image_id)
