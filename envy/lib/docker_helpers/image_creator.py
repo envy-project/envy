@@ -1,7 +1,6 @@
 import logging
 import tarfile
 import io
-import os.path
 from abc import ABC, abstractmethod
 
 from envy.lib.config import ENVY_CONFIG

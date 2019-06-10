@@ -1,9 +1,9 @@
 import requests
 
 class ConfigExecFile:
-    def __init__(self, filename, bytes):
+    def __init__(self, filename, byt):
         self.filename = filename
-        self.bytes = bytes
+        self.bytes = byt
 
 
 class FileDownloadError(Exception):
