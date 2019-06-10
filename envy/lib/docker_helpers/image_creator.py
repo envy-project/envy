@@ -28,7 +28,7 @@ class ImageCreator(ABC):
             NOTE: currently not validating either packages or executables
             Args:
                 packages (list<string>): A list of packages to install
-                nativeExecutables(list<string>): A list of absolute paths of native files to be copied into the container and run as part of creation.
+                nativeExecutables(list<ConfigExecFile>): A list of ConfigExecFiles to install into the image.
             Returns:
                 string: the Docker image ID
         """
@@ -60,14 +60,11 @@ class ImageCreator(ABC):
         tarArchive.addfile(tarinfo=info, fileobj=io.BytesIO(dockerData))
 
         # If they exist, add our executables
-        if executables is not None:
-
-            def resetName(tarInfo):
-                tarInfo.name = os.path.basename(tarInfo.name)
-                return tarInfo
-
+        if executables:
             for execute in executables:
-                tarArchive.add(execute, filter=resetName)
+                info = tarfile.TarInfo(name=execute.filename)
+                info.size = len(execute.bytes)
+                tarArchive.addfile(tarinfo=info, fileobj=io.BytesIO(execute.bytes))
         # Finish the tar archive
         tarArchive.close()
         # Restore the byte buffer
@@ -85,9 +82,9 @@ class ImageCreator(ABC):
         """
         dFile = "FROM " + self.baseImage() + "\n"
         dFile += "RUN " + self.getPackageString(packages) + "\n"
-        if nativeExecutables is not None:
+        if nativeExecutables:
             for execute in nativeExecutables:
-                execute = os.path.basename(execute)
+                execute = execute.filename
                 dFile += "COPY " + execute + " /install/" + execute + "\n"
                 dFile += (
                     "RUN chmod a+x /install/"

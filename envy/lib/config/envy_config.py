@@ -31,4 +31,4 @@ class EnvyConfig:
         return self.data["actions"]
 
     def getExtraExecutables(self):
-        return []  # TODO
+        return self.data["environment"]["dependencies"]["executables"]

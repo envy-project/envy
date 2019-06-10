@@ -26,8 +26,5 @@ websocket_client = "==0.56.0"
 dockerpty = {editable = true,git = "https://github.com/deanrock/dockerpty",ref = "new-docker-library"}
 pyyaml = "*"
 
-[requires]
-python_version = "3.7"
-
 [pipenv]
 allow_prereleases = true
