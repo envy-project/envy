@@ -10,7 +10,7 @@ from .image_creators import AptImageCreator
 class ImageManager:
     ### Static Image Creation ###
     @staticmethod
-    def create(docker_client: DockerClient) -> 'ImageManager':
+    def create(docker_client: DockerClient) -> "ImageManager":
         """ Creates an image from the ENVY_CONFIG environment
 
         Arguments:
@@ -44,7 +44,7 @@ class ImageManager:
 
         self.image_id = image_id
 
-    def __find(self):
+    def __find(self) -> Image:
         for image in self.docker_client.images.list():
             if image.id == self.image_id:
                 return image

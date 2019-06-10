@@ -21,7 +21,7 @@ class ContainerManager:
         return "envy-" + ENVY_CONFIG.get_environment_hash() + "-container"
 
     @staticmethod
-    def create(docker_client: DockerClient, image_id: str) -> 'ContainerManager':
+    def create(docker_client: DockerClient, image_id: str) -> "ContainerManager":
         """ Creates a container with the given image id
 
         Arguments:
@@ -46,7 +46,9 @@ class ContainerManager:
         return ContainerManager(docker_client, container.id)
 
     ### Container Management ###
-    def __init__(self, docker_client: DockerClient, container_id: str) -> ContainerManager:
+    def __init__(
+        self, docker_client: DockerClient, container_id: str
+    ) -> ContainerManager:
         """ Creates a container manager for the given container id
 
         Arguments:
@@ -113,7 +115,7 @@ class ContainerManager:
 
     def ensure_stopped(self):
         """ Ensures that the container is not running
-        
+
         Raises:
             ContainerNotFound: The container was not found
         """
