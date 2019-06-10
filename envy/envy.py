@@ -60,7 +60,7 @@ def runScript(_args, unknownArgs, script):
     containerFinder = ContainerFinder(dockerClient)
     container = containerFinder.findAndEnsureRunning()
 
-    command = "{} {}".format(script, " ".join(unknownArgs))
+    command = "/bin/bash -c '{} {}'".format(script, " ".join(unknownArgs))
     dockerpty.exec_command(dockerClient, container.id, command)
 
 
