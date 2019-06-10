@@ -6,14 +6,19 @@ import dockerpty
 
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import ENVY_STATE
+from envy.lib.docker_helpers.connection_tester import ConnectionTester
 from envy.lib.docker_helpers.container_finder import ContainerFinder
 from envy.lib.docker_helpers.image_finder import ImageFinder
 
-
 def upCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
+    connectionTester = ConnectionTester(dockerClient)
     containerFinder = ContainerFinder(dockerClient)
     imageFinder = ImageFinder(dockerClient)
+
+    if not connectionTester.success():
+        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        return
 
     if ENVY_STATE.didEnvironmentChange():
         print("Detected change in config environment. Re-creating container.")
@@ -29,7 +34,12 @@ def upCommand(_args, _unknownArgs):
 
 def shellCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
+    connectionTester = ConnectionTester(dockerClient)
     containerFinder = ContainerFinder(dockerClient)
+
+    if not connectionTester.success():
+        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        return
 
     container = containerFinder.findContainer()
 
@@ -38,7 +48,12 @@ def shellCommand(_args, _unknownArgs):
 
 def downCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
+    connectionTester = ConnectionTester(dockerClient)
     containerFinder = ContainerFinder(dockerClient)
+
+    if not connectionTester.success():
+        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        return
 
     containerFinder.findAndEnsureStopped()
     print("ENVy environment stopped")
@@ -46,8 +61,13 @@ def downCommand(_args, _unknownArgs):
 
 def nukeCommand(_args, _unknownArgs):
     dockerClient = docker.from_env()
+    connectionTester = ConnectionTester(dockerClient)
     containerFinder = ContainerFinder(dockerClient)
     imageFinder = ImageFinder(dockerClient)
+
+    if not connectionTester.success():
+        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        return
 
     containerFinder.destroyContainer()
     imageFinder.destroyImage()
@@ -57,7 +77,13 @@ def nukeCommand(_args, _unknownArgs):
 
 def runScript(_args, unknownArgs, script):
     dockerClient = docker.from_env()
+    connectionTester = ConnectionTester(dockerClient)
     containerFinder = ContainerFinder(dockerClient)
+
+    if not connectionTester.success():
+        print("Could not connect to docker: {}".format(connectionTester.reason()))
+        return
+
     container = containerFinder.findAndEnsureRunning()
 
     command = "/bin/bash -c '{} {}'".format(script, " ".join(unknownArgs))
