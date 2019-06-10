@@ -22,7 +22,7 @@ class ImageCreator(ABC):
     def build_image_tag(self):
         return "envy-{}".format(ENVY_CONFIG.get_environment_hash())
 
-    def create_image(self, packages, native_executables=None):
+    def create_image(self, packages: [str], native_executables=None):
         """ Create a docker image from a set of packages and executables.
             NOTE: currently not validating either packages or executables
             Args:

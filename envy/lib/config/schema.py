@@ -23,7 +23,7 @@ _SCHEMA = Schema(
 )
 
 
-def validate(raw_data):
+def validate(raw_data: str) -> {}:
     try:
         return _SCHEMA.validate(raw_data)
     except SchemaError as e:

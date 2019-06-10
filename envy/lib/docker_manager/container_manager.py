@@ -46,9 +46,7 @@ class ContainerManager:
         return ContainerManager(docker_client, container.id)
 
     ### Container Management ###
-    def __init__(
-        self, docker_client: DockerClient, container_id: str
-    ) -> ContainerManager:
+    def __init__(self, docker_client: DockerClient, container_id: str):
         """ Creates a container manager for the given container id
 
         Arguments:
