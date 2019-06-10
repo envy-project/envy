@@ -13,7 +13,7 @@ STATUS_MSG_CONTAINER_STOPPED = (
 STATUS_MSG_CONTAINER_READY = "ENVy environment is ready!"
 
 
-def up_command(_args: [str], _unknow_args: [str]):
+def up_command(_args: argparse.Namespace, _unknow_args: [str]):
     docker_manager = DockerManager()
 
     if not docker_manager.connection_ok():
@@ -31,7 +31,7 @@ def up_command(_args: [str], _unknow_args: [str]):
     print(STATUS_MSG_CONTAINER_READY)
 
 
-def shell_command(_args: [str], _unknown_args: [str]):
+def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
     docker_manager = DockerManager()
 
     if not docker_manager.connection_ok():
@@ -51,7 +51,7 @@ def shell_command(_args: [str], _unknown_args: [str]):
     container.exec("/bin/bash")
 
 
-def down_command(_args: [str], _unknown_args: [str]):
+def down_command(_args: argparse.Namespace, _unknown_args: [str]):
     docker_manager = DockerManager()
 
     if not docker_manager.connection_ok():
@@ -65,7 +65,7 @@ def down_command(_args: [str], _unknown_args: [str]):
     print("ENVy environment stopped")
 
 
-def nuke_command(_args: [str], _unknown_args: [str]):
+def nuke_command(_args: argparse.Namespace, _unknown_args: [str]):
     docker_manager = DockerManager()
 
     if not docker_manager.connection_ok():
@@ -77,7 +77,7 @@ def nuke_command(_args: [str], _unknown_args: [str]):
     print("ENVy environment destroyed")
 
 
-def status_command(_args: [str], _unknown_args: [str]):
+def status_command(_args: argparse.Namespace, _unknown_args: [str]):
     docker_manager = DockerManager()
 
     if not docker_manager.connection_ok():
@@ -94,7 +94,7 @@ def status_command(_args: [str], _unknown_args: [str]):
         print("ENVy environment is running!")
 
 
-def run_script(_args: [str], unknown_args: [str], script: str):
+def run_script(_args: argparse.Namespace, unknown_args: [str], script: str):
     docker_manager = DockerManager()
 
     if not docker_manager.connection_ok():
