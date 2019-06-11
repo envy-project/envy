@@ -13,7 +13,9 @@ _SCHEMA = Schema(
                 Optional("native", default=[]): [
                     {"recipe": str, "version": Or(str, int, float)}
                 ],
-                Optional("executables", default=[]): [{"filename": str, "url": str}],
+                Optional("executables", default=[]): [
+                    {"filename": str, Or("url", "path", only_one=True): str}
+                ],
             }
         },
         Optional("actions"): [

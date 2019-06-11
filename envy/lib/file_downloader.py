@@ -1,4 +1,5 @@
 import requests
+from envy.lib.config.file import findProjectRoot
 
 
 class ConfigExecFile:
@@ -8,27 +9,37 @@ class ConfigExecFile:
 
 
 class FileDownloadError(Exception):
-    def __init__(self, requests_error):
+    def __init__(self, requestsError):
         super(FileDownloadError, self).__init__()
-        self.requests_error = requests_error
+        self.requestsError = requestsError
 
 
-def resolve_files(file_objects):
-    """ Turn file objects from the config into "real" objects with Byte strings. Currently only supports URL format
+def resolveFiles(fileObjects):
+    """ Turn file objects from the config into "real" objects with Byte strings.
+        Support URL and path formats
         Args:
-            file_objects (list<dict>): file_objects from the config
+            fileObjects (list<dict>): fileObjects from the config
         Returns:
             list<ConfigExecFile>: List of executable files to run in the image
         Raises:
             FileDownloadError: When a file fails to download for some reason. Contains the Requests error.
     """
-    if not file_objects:
+    if not fileObjects:
         return None
-    returned_list = []
-    for obj in file_objects:
+    projectRoot = findProjectRoot()
+    returnedList = []
+    for obj in fileObjects:
         try:
-            r = requests.get(obj["url"])
-            returned_list.append(ConfigExecFile(obj["filename"], r.content))
+            if "url" in obj:
+                r = requests.get(obj["url"])
+                returnedList.append(ConfigExecFile(obj["filename"], r.content))
+            elif "path" in obj:
+                filePath = projectRoot + "/" + obj["path"]
+                try:
+                    fil = open(filePath, "rb")
+                    returnedList.append(ConfigExecFile(obj["filename"], fil.read()))
+                except:
+                    raise Exception("Failed opening file at " + filePath)
         except requests.exceptions.RequestException as e:
             raise FileDownloadError(e)
-    return returned_list
+    return returnedList
