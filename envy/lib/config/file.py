@@ -20,10 +20,10 @@ def find_config_file() -> Path:
         current_path = current_path.parent
 
 
-def findProjectRoot() -> str:
+def find_project_root() -> str:
     """ Finds the project root as defined by ENVy:
         the folder that contains the Envyfile
         Returns:
             [str] -- Absolute path to the root of the project.
     """
-    return os.path.dirname(findConfigFile())
+    return os.path.dirname(find_config_file())

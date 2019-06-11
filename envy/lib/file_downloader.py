@@ -1,5 +1,5 @@
 import requests
-from envy.lib.config.file import findProjectRoot
+from envy.lib.config.file import find_project_root
 
 
 class ConfigExecFile:
@@ -9,37 +9,37 @@ class ConfigExecFile:
 
 
 class FileDownloadError(Exception):
-    def __init__(self, requestsError):
+    def __init__(self, requests_error):
         super(FileDownloadError, self).__init__()
-        self.requestsError = requestsError
+        self.requests_error = requests_error
 
 
-def resolveFiles(fileObjects):
+def resolve_files(file_objects):
     """ Turn file objects from the config into "real" objects with Byte strings.
         Support URL and path formats
         Args:
-            fileObjects (list<dict>): fileObjects from the config
+            file_objects (list<dict>): fileObjects from the config
         Returns:
             list<ConfigExecFile>: List of executable files to run in the image
         Raises:
             FileDownloadError: When a file fails to download for some reason. Contains the Requests error.
     """
-    if not fileObjects:
+    if not file_objects:
         return None
-    projectRoot = findProjectRoot()
-    returnedList = []
-    for obj in fileObjects:
+    project_root = find_project_root()
+    returned_list = []
+    for obj in file_objects:
         try:
             if "url" in obj:
                 r = requests.get(obj["url"])
-                returnedList.append(ConfigExecFile(obj["filename"], r.content))
+                returned_list.append(ConfigExecFile(obj["filename"], r.content))
             elif "path" in obj:
-                filePath = projectRoot + "/" + obj["path"]
+                file_path = project_root + "/" + obj["path"]
                 try:
                     fil = open(filePath, "rb")
-                    returnedList.append(ConfigExecFile(obj["filename"], fil.read()))
+                    returned_list.append(ConfigExecFile(obj["filename"], fil.read()))
                 except:
-                    raise Exception("Failed opening file at " + filePath)
+                    raise Exception("Failed opening file at " + file_path)
         except requests.exceptions.RequestException as e:
             raise FileDownloadError(e)
-    return returnedList
+    return returned_list
