@@ -1,5 +1,5 @@
 import requests
-from envy.lib.config.file import find_project_root
+from envy.lib.config.file import find_config_file
 
 
 class ConfigExecFile:
@@ -26,7 +26,7 @@ def resolve_files(file_objects):
     """
     if not file_objects:
         return None
-    project_root = find_project_root()
+    project_root = find_config_file().parent
     returned_list = []
     for obj in file_objects:
         try:
@@ -34,7 +34,7 @@ def resolve_files(file_objects):
                 r = requests.get(obj["url"])
                 returned_list.append(ConfigExecFile(obj["filename"], r.content))
             elif "path" in obj:
-                file_path = project_root + "/" + obj["path"]
+                file_path = "{}/{}".format(project_root, obj["path"])
                 try:
                     fil = open(filePath, "rb")
                     returned_list.append(ConfigExecFile(obj["filename"], fil.read()))

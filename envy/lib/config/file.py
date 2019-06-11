@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 
 _CONFIG_FILE_NAME = ".envyfile"
 
@@ -18,12 +17,3 @@ def find_config_file() -> Path:
         if current_path == current_path.parent:
             break
         current_path = current_path.parent
-
-
-def find_project_root() -> str:
-    """ Finds the project root as defined by ENVy:
-        the folder that contains the Envyfile
-        Returns:
-            [str] -- Absolute path to the root of the project.
-    """
-    return os.path.dirname(find_config_file())
