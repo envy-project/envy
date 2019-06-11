@@ -4,6 +4,7 @@ Ask Alex:
 - Extra executables should be defined and implemented
 
 Not MVP:
+- pre-action command (i.e. start everything with `pipenv shell`)
 - `envy status`
 - better error handling (down / nuke / lint all error badly if up hasn't been run, up errors badly if docker isn't running, etc.)
 - exit on invalid schema in a better way
