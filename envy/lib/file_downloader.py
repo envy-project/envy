@@ -1,4 +1,5 @@
 import requests
+from envy.lib.config.file import find_config_file
 
 
 class ConfigExecFile:
@@ -14,9 +15,10 @@ class FileDownloadError(Exception):
 
 
 def resolve_files(file_objects):
-    """ Turn file objects from the config into "real" objects with Byte strings. Currently only supports URL format
+    """ Turn file objects from the config into "real" objects with Byte strings.
+        Support URL and path formats
         Args:
-            file_objects (list<dict>): file_objects from the config
+            file_objects (list<dict>): fileObjects from the config
         Returns:
             list<ConfigExecFile>: List of executable files to run in the image
         Raises:
@@ -24,11 +26,20 @@ def resolve_files(file_objects):
     """
     if not file_objects:
         return None
+    project_root = find_config_file().parent
     returned_list = []
     for obj in file_objects:
         try:
-            r = requests.get(obj["url"])
-            returned_list.append(ConfigExecFile(obj["filename"], r.content))
+            if "url" in obj:
+                r = requests.get(obj["url"])
+                returned_list.append(ConfigExecFile(obj["filename"], r.content))
+            elif "path" in obj:
+                file_path = "{}/{}".format(project_root, obj["path"])
+                try:
+                    fil = open(filePath, "rb")
+                    returned_list.append(ConfigExecFile(obj["filename"], fil.read()))
+                except:
+                    raise Exception("Failed opening file at " + file_path)
         except requests.exceptions.RequestException as e:
             raise FileDownloadError(e)
     return returned_list
