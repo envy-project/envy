@@ -1,0 +1,34 @@
+environment:
+  base:
+    image: ubuntu:18.04
+    package-manager: apt # should be implicit default for ubuntu
+  build-modules:
+    - name: native
+      type: native
+      packages:
+        - recipe: docker
+          version: 1.5-1build1
+        - recipe: python3.7
+          version: 3.7.3
+    - name: pipenv
+      type: script
+      steps:
+        - "pip3 install pipenv"
+    - name: python-deps
+      type: script
+      steps:
+        - "pipenv install -d"
+      triggers:
+        files:
+          - Pipfile # will rebuild whenever Pipfile is modified
+          - Pipfile.lock # will rebuild whenever Pipfile.lock is modified
+        modules:
+          - pipenv # will rebuild whenever pipenv module is rebuilt
+    - name: other-executables
+      type: remote # will pull file from remote URL and execute
+      url: https://magmastone.net/some_file.sh
+    - name: one-time-example
+      type: script
+      steps:
+        - "scripts/seed_db.sh"
+      triggers: once # only runs once ever. state file stored in .envy by default
