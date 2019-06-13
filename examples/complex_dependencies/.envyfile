@@ -2,18 +2,19 @@ environment:
   base:
     image: ubuntu:18.04
     package-manager: apt # should be implicit default for ubuntu
+  native:
+    - recipe: docker
+      version: 1.5-1build1
+    - recipe: python3.7
+      version: 3.7.3 # version used if specified
   build-modules:
-    - name: native
-      type: native
-      packages:
-        - recipe: docker
-          version: 1.5-1build1
-        - recipe: python3.7
-          version: 3.7.3
     - name: pipenv
       type: script
       steps:
         - "pip3 install pipenv"
+      triggers:
+        native:
+          - python3.7 # will rebuild whenever python3.7 is updated. Shouldn't happen often since pinned to 3.7.3
     - name: python-deps
       type: script
       steps:
