@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import hashlib
 import json
@@ -33,10 +34,22 @@ class EnvyConfig:
         ).hexdigest()
 
     def get_native_dependencies(self) -> [{}]:
-        return self.data["environment"]["dependencies"]["native"]
+        if "dependencies" in self.data["environment"] and "native" in self.data["environment"]["dependencies"]:
+            return self.data["environment"]["dependencies"]["native"]
+
+        return []
 
     def get_actions(self) -> [{}]:
         return self.data["actions"]
 
     def get_extra_executables(self) -> [{}]:
-        return self.data["environment"]["dependencies"]["executables"]
+        if "dependencies" in self.data["environment"] and "executables" in self.data["environment"]["executables"]:
+            return self.data["environment"]["dependencies"]["executables"]
+        
+        return []
+
+    def get_services_compose_path(self) -> Optional[str]:
+        if "compose-file" in self.data["services"]:
+            return self.data["services"]["compose-file"]
+
+        return None

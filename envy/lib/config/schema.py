@@ -18,9 +18,12 @@ _SCHEMA = Schema(
                 ],
             }
         },
-        Optional("actions"): [
+        Optional("actions", default=[]): [
             {"name": str, "script": str, "help": str, Optional("description"): str}
         ],
+        Optional("services", default={}): {
+            Optional("compose-file", default="docker-compose.yml"): str
+        },
     }
 )
 
