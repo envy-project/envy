@@ -33,20 +33,28 @@ class EnvyConfig:
             json.dumps(self.data, sort_keys=True).encode("utf-8")
         ).hexdigest()
 
+    def get_base_image(self) -> str:
+        return self.data["environment"]["base"]["image"]
+
+    def get_package_manager(self) -> str:
+        config_manager = self.data["environment"]["base"]["package-manager"]
+
+        if not config_manager:
+            config_manager = self.__guess_package_manager()
+
+        return config_manager
+
+    def __guess_package_manager(self) -> str:
+        return "apt"
+
     def get_native_dependencies(self) -> [{}]:
-        return (
-            self.data.get("environment", {}).get("dependencies", {}).get("native", [])
-        )
+        return self.data["environment"]["native"]
 
     def get_actions(self) -> [{}]:
         return self.data.get("actions", [])
 
     def get_extra_executables(self) -> [{}]:
-        return (
-            self.data.get("environment", {})
-            .get("dependencies", {})
-            .get("executables", [])
-        )
+        return []  # TODO delete this
 
     def get_services_compose_path(self) -> Optional[str]:
         return self.data.get("services", {}).get("compose-file")
