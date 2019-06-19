@@ -34,10 +34,10 @@ class EnvyState:
         return ENVY_CONFIG.get_environment_hash() != self.get_environment_hash()
 
     def get_environment_hash(self) -> str:
-        self.__get(['environment', 'md5'])
+        self.__get(["environment", "md5"])
 
     def set_environment_hash(self, new_hash):
-        self.__set(['environment', 'md5'], new_hash)
+        self.__set(["environment", "md5"], new_hash)
 
     def update_environment_hash(self):
         self.set_environment_hash(ENVY_CONFIG.get_environment_hash())
@@ -46,16 +46,16 @@ class EnvyState:
         return "{}/environment.md5".format(self.directory)
 
     def get_container_id(self):
-        self.__get(['container', 'dockerid'])
+        return self.__get(["container", "dockerid"])
 
     def set_container_id(self, new_id):
-        self.__set(['container', 'dockerid'], new_id)
+        self.__set(["container", "dockerid"], new_id)
 
     def get_image_id(self):
-        self.__get(['image', 'dockerid'])
+        return self.__get(["image", "dockerid"])
 
     def set_image_id(self, new_id):
-        self.__set(['image', 'dockerid'], new_id)
+        self.__set(["image", "dockerid"], new_id)
 
     def __set(self, keys, value):
         state = self.__get_state()
