@@ -2,7 +2,6 @@ from docker import DockerClient
 from docker.models.images import Image
 
 from envy.lib.config import ENVY_CONFIG
-from envy.lib.file_downloader import resolve_files
 
 from .image_creators import AptImageCreator
 
@@ -21,10 +20,9 @@ class ImageManager:
         """
         print("Creating ENVy environment image.")
 
-        # TODO: Use the correct image creator based on the config file!
+        # TODO: Use the correct image creator based on the config file's base image
         image_id = AptImageCreator(docker_client).create_image(
-            ENVY_CONFIG.get_native_dependencies(),
-            resolve_files(ENVY_CONFIG.get_extra_executables()),
+            ENVY_CONFIG.get_native_dependencies()
         )
 
         return ImageManager(docker_client, image_id)

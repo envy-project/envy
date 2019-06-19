@@ -53,10 +53,7 @@ class EnvyConfig:
         return self.data["environment"]["native"]
 
     def get_actions(self) -> [{}]:
-        return self.data.get("actions", [])
-
-    def get_extra_executables(self) -> [{}]:
-        return []  # TODO delete this
+        return self.data["actions"]
 
     def get_services_compose_path(self) -> Optional[str]:
-        return self.data.get("services", {}).get("compose-file")
+        return self.data["services"].get("compose-file")
