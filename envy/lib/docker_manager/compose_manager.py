@@ -11,7 +11,6 @@ class ComposeManager:
 
     # TODO compose may not be installed, should curl for it
     # TODO check subprocess outputs for error
-    # TODO store created containers in state to avoid possible danglers
     # TODO I don't think we can do anything about this, but we *will* leave images dangling here. Probably just something we're ok with.
 
     def up(self):
