@@ -1,9 +1,31 @@
 environment:
-  dependencies:
-    python3: Pipfile
-    native:
-      - recipe: docker
-        version: 1.5-1build1
+  native:
+    - recipe: docker
+      version: 1.5-1build1
+    - recipe: git
+    - recipe: python3.7
+    - recipe: python3-pip
+  build-modules:
+    - name: pipenv
+      type: script
+      steps:
+        - "rm /usr/bin/python3"
+        - "ln -s /usr/bin/python3.7 /usr/bin/python3"
+        - "pip3 install pipenv"
+      triggers:
+        native:
+          - python3.7
+          - python3-pip
+    - name: python-deps
+      type: script
+      steps:
+        - "pipenv install -d"
+      triggers:
+        files:
+          - Pipfile
+          - Pipfile.lock
+        modules:
+          - pipenv
 actions:
   - name: lint
     script: 'pipenv run black . ; pipenv run pylint envy'

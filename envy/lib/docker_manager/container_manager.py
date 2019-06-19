@@ -95,6 +95,7 @@ class ContainerManager:
         """
         if not self.is_running():
             raise ContainerNotRunning()
+
         command_inside_project = "/bin/bash -c 'cd /project; {}'".format(
             command.replace("'", "'\\''")
         )
