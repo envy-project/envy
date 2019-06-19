@@ -24,7 +24,7 @@ class ComposeManager:
 
     def down(self):
         subprocess.check_output(
-            ["docker-compose", "-f", self.compose_file, "down"], stderr=DEVNULL
+            ["docker-compose", "-f", self.compose_file, "stop"], stderr=DEVNULL
         )
 
     def nuke(self):
@@ -32,5 +32,5 @@ class ComposeManager:
             ["docker-compose", "-f", self.compose_file, "kill"], stderr=DEVNULL
         )
         subprocess.check_output(
-            ["docker-compose", "-f", self.compose_file, "rm"], stderr=DEVNULL
+            ["docker-compose", "-f", self.compose_file, "rm", "-sf"], stderr=DEVNULL
         )
