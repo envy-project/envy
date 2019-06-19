@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1378e173bc649083fff84c0737118c93cb31ad51a861449c642e94aa5e6d86dc"
+            "sha256": "eea7395501c1f5741577cf93cea5b6706ce735443513fa2e5d6a51b3ceb65c87"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -57,6 +57,10 @@
             "editable": true,
             "git": "https://github.com/deanrock/dockerpty",
             "ref": "73cc6f947a9501717b42158a9e839bf96bedeb69"
+        },
+        "envy": {
+            "editable": true,
+            "path": "."
         },
         "idna": {
             "hashes": [
