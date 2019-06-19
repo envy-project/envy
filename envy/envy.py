@@ -20,14 +20,15 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
         docker_manager.print_connection_err()
         return
 
-    if ENVY_STATE.did_environment_change():
+    if ENVY_STATE.get_image_hash() != ENVY_CONFIG.get_image_hash() or ENVY_STATE.get_container_hash() != ENVY_CONFIG.get_container_hash():
         print("Detected change in config environment. Re-creating ENVy environment.")
         docker_manager.nuke()
 
     container = docker_manager.ensure_container()
     container.ensure_running()
 
-    ENVY_STATE.update_environment_hash()
+    ENVY_STATE.set_image_hash(ENVY_CONFIG.get_image_hash())
+    ENVY_STATE.set_container_hash(ENVY_CONFIG.get_container_hash())
     print(STATUS_MSG_CONTAINER_READY)
 
     compose_path = ENVY_CONFIG.get_services_compose_path()

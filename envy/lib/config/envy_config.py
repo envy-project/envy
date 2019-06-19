@@ -23,14 +23,16 @@ class EnvyConfig:
 
         self.data = validate_schema(raw_data)
 
-    def get_environment_hash(self) -> str:
+    def get_image_hash(self) -> str:
         return hashlib.md5(
-            json.dumps(self.data["environment"], sort_keys=True).encode("utf-8")
+            json.dumps(self.data["environment"]["base"], sort_keys=True).encode("utf-8")
         ).hexdigest()
 
-    def get_full_hash(self) -> str:
+    def get_container_hash(self) -> str:
         return hashlib.md5(
-            json.dumps(self.data, sort_keys=True).encode("utf-8")
+            json.dumps(
+                self.data["environment"]["build-modules"], sort_keys=True
+            ).encode("utf-8")
         ).hexdigest()
 
     def get_base_image(self) -> str:
