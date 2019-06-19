@@ -25,6 +25,7 @@ wrapt = "==1.11.1"
 websocket_client = "==0.56.0"
 dockerpty = {editable = true,git = "https://github.com/deanrock/dockerpty",ref = "new-docker-library"}
 pyyaml = "*"
+envy = {editable = true,path = "."}
 
 [pipenv]
 allow_prereleases = true
