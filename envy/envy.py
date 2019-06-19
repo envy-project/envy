@@ -5,6 +5,7 @@ import argparse
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import ENVY_STATE
 from envy.lib.docker_manager import DockerManager
+from envy.lib.docker_manager import ComposeManager
 
 STATUS_MSG_NO_CONTAINER = "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
 STATUS_MSG_CONTAINER_STOPPED = (
@@ -29,6 +30,11 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
 
     ENVY_STATE.update_environment_hash()
     print(STATUS_MSG_CONTAINER_READY)
+
+    compose_path = ENVY_CONFIG.get_services_compose_path()
+    if compose_path:
+        ComposeManager(compose_path).up()
+        print("Sidecar services started")
 
 
 def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
@@ -64,6 +70,12 @@ def down_command(_args: argparse.Namespace, _unknown_args: [str]):
 
     print("ENVy environment stopped")
 
+    compose_path = ENVY_CONFIG.get_services_compose_path()
+    if compose_path:
+        ComposeManager(compose_path).down()
+        print("Sidecar services stopped")
+
+
 
 def nuke_command(_args: argparse.Namespace, _unknown_args: [str]):
     docker_manager = DockerManager()
@@ -74,6 +86,11 @@ def nuke_command(_args: argparse.Namespace, _unknown_args: [str]):
 
     docker_manager.nuke()
     ENVY_STATE.nuke()
+
+    compose_path = ENVY_CONFIG.get_services_compose_path()
+    if compose_path:
+        ComposeManager(compose_path).nuke()
+
     print("ENVy environment destroyed")
 
 
