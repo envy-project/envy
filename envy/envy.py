@@ -76,7 +76,6 @@ def down_command(_args: argparse.Namespace, _unknown_args: [str]):
         print("Sidecar services stopped")
 
 
-
 def nuke_command(_args: argparse.Namespace, _unknown_args: [str]):
     docker_manager = DockerManager()
 
