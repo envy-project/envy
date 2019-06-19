@@ -12,6 +12,10 @@ class ComposeManager:
     # TODO I don't think we can do anything about this, but we *will* leave images dangling here. Probably just something we're ok with.
 
     def up(self):
+        """ Creates and starts the docker-compose environment.
+            Also pulls new images for each service if necessary.
+        """
+
         # TODO detect that pull is necessary and print something, since it can take a while
         try:
             subprocess.run(
@@ -34,6 +38,9 @@ class ComposeManager:
             print(e.stderr.decode())
 
     def down(self):
+        """ Stops the docker-compose environment. Does not delete any containers or volumes.
+        """
+
         try:
             subprocess.run(
                 ["docker-compose", "-f", self.compose_file, "stop"],
@@ -50,6 +57,9 @@ class ComposeManager:
             print(e.stderr.decode())
 
     def nuke(self):
+        """ Destroys the docker-compose environment. Removes all service containers and volumes.
+        """
+
         try:
             subprocess.run(
                 ["docker-compose", "-f", self.compose_file, "kill"],
