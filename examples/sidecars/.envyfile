@@ -1,0 +1,7 @@
+environment:
+  dependencies:
+    native:
+      - recipe: curl
+        version: 1
+services:
+  compose-file: sidecar-compose.yml

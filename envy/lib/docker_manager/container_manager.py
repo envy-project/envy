@@ -37,6 +37,7 @@ class ContainerManager:
             image_id,
             "tail -f /dev/null",
             name=ContainerManager.__generate_container_name(),
+            network_mode="host",
             mounts=[
                 Mount("/project", str(ENVY_CONFIG_FILE_PATH.parent), type="bind"),
                 Mount("/var/run/docker.sock", "/var/run/docker.sock", type="bind"),
