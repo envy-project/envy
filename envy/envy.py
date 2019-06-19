@@ -4,8 +4,7 @@ import argparse
 
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import ENVY_STATE
-from envy.lib.docker_manager import DockerManager
-from envy.lib.docker_manager import ComposeManager
+from envy.lib.docker_manager import ComposeManager, DockerManager
 
 STATUS_MSG_NO_CONTAINER = "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
 STATUS_MSG_CONTAINER_STOPPED = (

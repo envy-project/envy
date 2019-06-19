@@ -35,8 +35,7 @@ class EnvyConfig:
 
     def get_native_dependencies(self) -> [{}]:
         return (
-            self.data.get("environment", {}).get("dependencies", {}).get("native", {})
-            or []
+            self.data.get("environment", {}).get("dependencies", {}).get("native", [])
         )
 
     def get_actions(self) -> [{}]:
@@ -46,9 +45,8 @@ class EnvyConfig:
         return (
             self.data.get("environment", {})
             .get("dependencies", {})
-            .get("executables", {})
-            or []
+            .get("executables", [])
         )
 
     def get_services_compose_path(self) -> Optional[str]:
-        return self.data.get("services", {}).get("compose-file", {})
+        return self.data.get("services", {}).get("compose-file")

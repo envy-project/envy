@@ -1,5 +1,4 @@
 import subprocess
-from subprocess import CalledProcessError
 
 
 class ComposeManager:
@@ -25,7 +24,7 @@ class ComposeManager:
                 check=True,
                 capture_output=True,
             )
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             print(
                 "Failed to start sidecar services. Command returned with error code {}".format(
                     e.returncode
@@ -41,7 +40,7 @@ class ComposeManager:
                 check=True,
                 capture_output=True,
             )
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             print(
                 "Failed to stop sidecar services. Command returned with error code {}".format(
                     e.returncode
@@ -62,7 +61,7 @@ class ComposeManager:
                 check=True,
                 capture_output=True,
             )
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             print(
                 "Failed to nuke sidecar services. Command returned with error code {}".format(
                     e.returncode
