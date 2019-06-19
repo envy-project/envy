@@ -16,12 +16,22 @@ class ComposeManager:
 
     def up(self):
         # TODO detect that pull is necessary and print something, since it can take a while
-        subprocess.check_output(['docker-compose', '-f', self.compose_file, 'pull'], stderr=DEVNULL)
-        subprocess.check_output(['docker-compose', '-f', self.compose_file, 'up', '-d'], stderr=DEVNULL)
+        subprocess.check_output(
+            ["docker-compose", "-f", self.compose_file, "pull"], stderr=DEVNULL
+        )
+        subprocess.check_output(
+            ["docker-compose", "-f", self.compose_file, "up", "-d"], stderr=DEVNULL
+        )
 
     def down(self):
-        subprocess.check_output(['docker-compose', '-f', self.compose_file, 'down'], stderr=DEVNULL)
+        subprocess.check_output(
+            ["docker-compose", "-f", self.compose_file, "down"], stderr=DEVNULL
+        )
 
     def nuke(self):
-        subprocess.check_output(['docker-compose', '-f', self.compose_file, 'kill'], stderr=DEVNULL)
-        subprocess.check_output(['docker-compose', '-f', self.compose_file, 'rm'], stderr=DEVNULL)
+        subprocess.check_output(
+            ["docker-compose", "-f", self.compose_file, "kill"], stderr=DEVNULL
+        )
+        subprocess.check_output(
+            ["docker-compose", "-f", self.compose_file, "rm"], stderr=DEVNULL
+        )

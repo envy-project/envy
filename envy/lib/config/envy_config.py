@@ -34,7 +34,10 @@ class EnvyConfig:
         ).hexdigest()
 
     def get_native_dependencies(self) -> [{}]:
-        if "dependencies" in self.data["environment"] and "native" in self.data["environment"]["dependencies"]:
+        if (
+            "dependencies" in self.data["environment"]
+            and "native" in self.data["environment"]["dependencies"]
+        ):
             return self.data["environment"]["dependencies"]["native"]
 
         return []
@@ -43,9 +46,12 @@ class EnvyConfig:
         return self.data["actions"]
 
     def get_extra_executables(self) -> [{}]:
-        if "dependencies" in self.data["environment"] and "executables" in self.data["environment"]["executables"]:
+        if (
+            "dependencies" in self.data["environment"]
+            and "executables" in self.data["environment"]["dependencies"]
+        ):
             return self.data["environment"]["dependencies"]["executables"]
-        
+
         return []
 
     def get_services_compose_path(self) -> Optional[str]:
