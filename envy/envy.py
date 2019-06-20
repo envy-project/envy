@@ -123,7 +123,7 @@ def run_script(_args: argparse.Namespace, unknown_args: [str], script: str):
     elif not container.is_running():
         print(STATUS_MSG_CONTAINER_STOPPED)
     else:
-        command = "/bin/bash -c '{} {}'".format(script, " ".join(unknown_args))
+        command = "{} {}".format(script, " ".join(unknown_args))
         container.exec(command)
 
 
