@@ -52,6 +52,9 @@ class EnvyConfig:
     def get_native_dependencies(self) -> [{}]:
         return self.data["environment"]["native"]
 
+    def get_build_modules(self) -> [{}]:
+        return self.data["environment"]["build-modules"]
+
     def get_actions(self) -> [{}]:
         return self.data["actions"]
 
