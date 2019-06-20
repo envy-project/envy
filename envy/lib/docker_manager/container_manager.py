@@ -95,8 +95,12 @@ class ContainerManager:
         """
         if not self.is_running():
             raise ContainerNotRunning()
-
-        dockerpty.exec_command(self.docker_client, self.container_id, command)
+        command_inside_project = "/bin/bash -c 'cd /project; {}'".format(
+            command.replace("'", "'\\''")
+        )
+        dockerpty.exec_command(
+            self.docker_client, self.container_id, command_inside_project
+        )
 
     def ensure_running(self):
         """ Ensures that the container is running

@@ -6,7 +6,7 @@ environment:
         version: 1.5-1build1
 actions:
   - name: lint
-    script: 'pipenv run black . ; pylint envy'
+    script: 'pipenv run black . ; pipenv run pylint envy'
     help: 'lint the project'
   - name: pylint
     script: 'cd envy ; pylint envy'
