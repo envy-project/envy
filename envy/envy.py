@@ -3,8 +3,9 @@
 import argparse
 
 from envy.lib.config import ENVY_CONFIG
-from envy.lib.state import ENVY_STATE
+from envy.lib.state import ENVY_STATE, create_directory_if_not_exists
 from envy.lib.docker_manager import ComposeManager, DockerManager
+from envy.lib.build_module import Builder
 
 STATUS_MSG_NO_CONTAINER = "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
 STATUS_MSG_CONTAINER_STOPPED = (
@@ -20,12 +21,23 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
         docker_manager.print_connection_err()
         return
 
-    if ENVY_STATE.get_image_hash() != ENVY_CONFIG.get_image_hash() or ENVY_STATE.get_container_hash() != ENVY_CONFIG.get_container_hash():
-        print("Detected change in config environment. Re-creating ENVy environment.")
-        docker_manager.nuke()
+    if (
+        ENVY_STATE.get_image_hash() != ENVY_CONFIG.get_image_hash()
+        or ENVY_STATE.get_container_hash() != ENVY_CONFIG.get_container_hash()
+    ):
+        if ENVY_STATE.get_image_id:
+            print(
+                "Detected change in config environment. Re-creating ENVy environment."
+            )
+            docker_manager.nuke()
+            ENVY_STATE.nuke()
+            create_directory_if_not_exists()
 
     container = docker_manager.ensure_container()
     container.ensure_running()
+
+    module_builder = Builder(container)
+    module_builder.build()
 
     ENVY_STATE.set_image_hash(ENVY_CONFIG.get_image_hash())
     ENVY_STATE.set_container_hash(ENVY_CONFIG.get_container_hash())
