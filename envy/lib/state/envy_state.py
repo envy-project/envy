@@ -23,26 +23,32 @@ class EnvyState:
     def get_image_hash(self) -> str:
         return self.__get(["image", "md5"])
 
-    def set_image_hash(self, new_hash):
+    def set_image_hash(self, new_hash: str):
         self.__set(["image", "md5"], new_hash)
 
     def get_container_hash(self) -> str:
         return self.__get(["container", "md5"])
 
-    def set_container_hash(self, new_hash):
+    def set_container_hash(self, new_hash: str):
         self.__set(["container", "md5"], new_hash)
 
-    def get_container_id(self):
+    def get_container_id(self) -> str:
         return self.__get(["container", "dockerid"])
 
-    def set_container_id(self, new_id):
+    def set_container_id(self, new_id: str):
         self.__set(["container", "dockerid"], new_id)
 
-    def get_image_id(self):
+    def get_image_id(self) -> str:
         return self.__get(["image", "dockerid"])
 
-    def set_image_id(self, new_id):
+    def set_image_id(self, new_id: str):
         self.__set(["image", "dockerid"], new_id)
+
+    def get_watchfile_hash(self, file: str) -> str:
+        return self.__get(["watchfile", file])
+
+    def set_watchfile_hash(self, file: str, new_hash: str):
+        self.__set(["watchfile", file], new_hash)
 
     def __set(self, keys, value):
         state = self.__get_state()
