@@ -1,13 +1,11 @@
 from pathlib import Path
 import os
 
-from envy.lib.config import ENVY_CONFIG_FILE_PATH
+from envy.lib.config import ENVY_PROJECT_DIR
 
 _STATE_DIRECTORY = ".envy"
 
-ENVY_STATE_PATH = "{}/{}".format(
-    os.path.dirname(ENVY_CONFIG_FILE_PATH), _STATE_DIRECTORY
-)
+ENVY_STATE_PATH = "{}/{}".format(ENVY_PROJECT_DIR, _STATE_DIRECTORY)
 
 
 def create_directory_if_not_exists():
