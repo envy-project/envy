@@ -42,9 +42,6 @@ class EnvyState:
     def update_environment_hash(self):
         self.set_environment_hash(ENVY_CONFIG.get_environment_hash())
 
-    def __get_environment_file(self):
-        return "{}/environment.md5".format(self.directory)
-
     def get_container_id(self):
         return self.__get(["container", "dockerid"])
 
