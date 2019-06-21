@@ -1,5 +1,5 @@
 environment:
-  native:
+  system-packages:
     - recipe: docker
       version: 1.5-1build1
     - recipe: git
@@ -13,7 +13,7 @@ environment:
         - "ln -s /usr/bin/python3.7 /usr/bin/python3"
         - "pip3 install pipenv"
       triggers:
-        native:
+        system-packages:
           - python3.7
           - python3-pip
     - name: python-deps

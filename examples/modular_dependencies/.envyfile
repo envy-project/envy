@@ -1,5 +1,5 @@
 environment:
-  native:
+  system-packages:
     - recipe: docker
       version: 1.5-1build1
     - recipe: python3.7
@@ -10,7 +10,7 @@ environment:
       steps:
         - "pip3 install pipenv"
       triggers:
-        native:
+        system-packages:
           - python3.7
     - name: python-deps
       type: script

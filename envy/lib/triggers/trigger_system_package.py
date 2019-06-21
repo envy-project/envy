@@ -3,9 +3,9 @@ from envy.lib.build_module.package_manager_module import PackageManagerModule
 from .trigger import Trigger
 
 
-class TriggerNative(Trigger):
-    """ Triggers whenever the given native dependency is reinstalled.
-        NOTE: Currently we don't reinstall native dependencies piecemeal, so this triggers whenever the image is rebuilt.
+class TriggerSystemPackage(Trigger):
+    """ Triggers whenever the given system package is reinstalled.
+        NOTE: Currently we don't reinstall system packages piecemeal, so this triggers whenever the image is rebuilt.
     """
 
     def __init__(self, recipe: str, package_manager_module: PackageManagerModule):

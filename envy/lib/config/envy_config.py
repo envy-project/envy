@@ -49,8 +49,8 @@ class EnvyConfig:
     def __guess_package_manager(self) -> str:
         return "apt"
 
-    def get_native_dependencies(self) -> [{}]:
-        return self.data["environment"]["native"]
+    def get_system_packages(self) -> [{}]:
+        return self.data["environment"]["system-packages"]
 
     def get_build_modules(self) -> [{}]:
         return self.data["environment"]["build-modules"]

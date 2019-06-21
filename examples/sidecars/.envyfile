@@ -1,6 +1,6 @@
 environment:
   dependencies:
-    native:
+    system-packages:
       - recipe: curl
         version: 1
 services:

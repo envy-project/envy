@@ -7,7 +7,7 @@ from .build_module import BuildModule
 
 class PackageManagerModule(BuildModule):
     """ A Package Manager Module is a Build Module that repesents a step that handles
-    packaged, native dependencies for an ENVy environment image.
+    system package dependencies for an ENVy environment image.
     """
 
     def __init__(self, name: str, container: ContainerManager, packages: [{}]):

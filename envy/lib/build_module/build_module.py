@@ -4,7 +4,7 @@ from envy.lib.docker_manager import ContainerManager
 
 
 class BuildModule(ABC):
-    """ A Build Module is a non-native build step for an ENVy environment image.
+    """ A Build Module is a build step for an ENVy environment image.
         Build modules have a trigger, which tells the builder when they need to be run.
 
     See Also: trigger.py

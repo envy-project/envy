@@ -22,7 +22,7 @@ class ImageManager:
 
         # TODO: Use the correct image creator based on the config file's base image
         image_id = AptImageCreator(docker_client).create_image(
-            ENVY_CONFIG.get_native_dependencies()
+            ENVY_CONFIG.get_system_packages()
         )
 
         return ImageManager(docker_client, image_id)

@@ -6,7 +6,7 @@ _DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu:18.04", "package-manager": "apt"}
 
 _DEFAULT_ENVIRONMENT = {
     "base": _DEFAULT_ENVIRONMENT_BASE,
-    "native": [],
+    "system-packages": [],
     "build-modules": [],
 }
 
@@ -14,7 +14,7 @@ _BUILD_MODULE_NOWATCH_TYPES = ["script", "remote"]
 
 _BUILD_MODULE_TRIGGERS = ["once", "always"]
 
-_DEFAULT_BM_TRIGGERS = {"native": [], "files": [], "modules": []}
+_DEFAULT_BM_TRIGGERS = {"system-packages": [], "files": [], "modules": []}
 
 
 def __validate_build_module(module: {}) -> bool:
@@ -35,7 +35,7 @@ def __validate_build_module(module: {}) -> bool:
 
 def __validate_environment_build_modules(environment: {}) -> bool:
     """ Validates that the build modules in the given environment dictionary are valid.
-        Verifies that their names are unique, and that they only depend on previously defined modules and native deps
+        Verifies that their names are unique, and that they only depend on previously defined modules and system packages
 
     Arguments:
         environment {{}} -- The environment dictionary
@@ -44,7 +44,9 @@ def __validate_environment_build_modules(environment: {}) -> bool:
         bool -- Result
     """
 
-    valid_native_names = {dep["recipe"] for dep in environment["native"]}
+    valid_system_package_names = {
+        dep["recipe"] for dep in environment["system-packages"]
+    }
 
     seen_module_names = set()
 
@@ -55,10 +57,10 @@ def __validate_environment_build_modules(environment: {}) -> bool:
         seen_module_names.add(module["name"])
 
         if isinstance(module["triggers"], list):
-            for native_trigger in module["triggers"]["native"]:
-                if native_trigger not in valid_native_names:
+            for system_package_trigger in module["triggers"]["system-packages"]:
+                if system_package_trigger not in valid_system_package_names:
                     print(
-                        "Native triggers can only depend on valid native dependencies"
+                        "system package triggers can only depend on valid system packages"
                     )
                     return False
 
@@ -83,7 +85,7 @@ _SCHEMA = Schema(
                     "image": str,
                     Optional("package-manager"): str,
                 },
-                Optional("native", default=[]): [
+                Optional("system-packages", default=[]): [
                     {"recipe": str, Optional("version"): Or(str, int, float)}
                 ],
                 Optional("build-modules", default=[]): [
@@ -102,7 +104,7 @@ _SCHEMA = Schema(
                                     lambda t: t in _BUILD_MODULE_TRIGGERS,
                                 ),
                                 {
-                                    Optional("native", default=[]): [str],
+                                    Optional("system-packages", default=[]): [str],
                                     Optional("files", default=[]): [str],
                                     Optional("modules", default=[]): [str],
                                 },
