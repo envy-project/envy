@@ -2,7 +2,7 @@ import sys
 
 from schema import Schema, SchemaError, Optional, And, Or, Use
 
-_DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu", "package-manager": "apt"}
+_DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu:18.04", "package-manager": "apt"}
 
 _DEFAULT_ENVIRONMENT = {
     "base": _DEFAULT_ENVIRONMENT_BASE,

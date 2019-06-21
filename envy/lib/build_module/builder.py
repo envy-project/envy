@@ -18,6 +18,9 @@ class Builder:
         self.modules = OrderedDict()
 
     def build(self):
+        # Create native module
+        self.__create_native_module()
+
         # Create modules
         self.__create_modules()
 
@@ -26,6 +29,9 @@ class Builder:
 
         # Persist triggers
         self.__persist_triggers()
+
+    def __create_native_module(self):
+        pass
 
     def __create_modules(self):
         for m in ENVY_CONFIG.get_build_modules():
@@ -37,20 +43,25 @@ class Builder:
                 module = RemoteBuildModule(name, self.container, m["url"])
 
             # Create and register triggers
-            if m["triggers"] == "once":
-                trigger = triggers.TriggerOnce(name)
-            elif m["triggers"] == "always":
-                trigger = triggers.TriggerAlways()
-            else:
-                trigger_list = []
-                for t in m["triggers"]["native"]:
-                    trigger_list.append(triggers.TriggerNative(t))
-                for t in m["triggers"]["files"]:
-                    trigger_list.append(triggers.TriggerWatchfile(t))
-                for t in m["triggers"]["modules"]:
-                    trigger_list.append(triggers.TriggerModule(self.modules[t]))
+            if m["triggers"] is not None:
+                if m["triggers"] == "once":
+                    trigger = triggers.TriggerOnce(name)
+                elif m["triggers"] == "always":
+                    trigger = triggers.TriggerAlways()
+                else:
+                    trigger_list = []
+                    for t in m["triggers"]["native"]:
+                        # TODO: swap this out once native isn't implemented in the image
+                        trigger_list.append(triggers.TriggerPerContainer())
+                        # trigger_list.append(triggers.TriggerNative(t))
+                    for t in m["triggers"]["files"]:
+                        trigger_list.append(triggers.TriggerWatchfile(t))
+                    for t in m["triggers"]["modules"]:
+                        trigger_list.append(triggers.TriggerModule(self.modules[t]))
 
-                trigger = triggers.TriggerGroup(trigger_list)
+                    trigger = triggers.TriggerGroup(trigger_list)
+            else:
+                trigger = triggers.TriggerPerContainer()
 
             module.set_trigger(trigger)
 
