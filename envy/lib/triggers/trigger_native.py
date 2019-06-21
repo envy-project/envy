@@ -1,4 +1,4 @@
-from envy.lib.state import ENVY_STATE
+from envy.lib.build_module.package_manager_module import PackageManagerModule
 
 from .trigger import Trigger
 
@@ -8,12 +8,15 @@ class TriggerNative(Trigger):
         NOTE: Currently we don't reinstall native dependencies piecemeal, so this triggers whenever the image is rebuilt.
     """
 
-    def __init__(self, recipe: str):
+    def __init__(self, recipe: str, package_manager_module: PackageManagerModule):
         self.recipe = recipe
+        self.package_manager_module = package_manager_module
 
     def should_trigger(self) -> bool:
-        # For now, we don't reinstall native dependencies piecemeal, so this check is sufficient.
-        if ENVY_STATE.get_image_hash() is None:
+        if self.recipe in [
+            package["recipe"]
+            for package in self.package_manager_module.updated_packages()
+        ]:
             return True
         return False
 
