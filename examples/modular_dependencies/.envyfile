@@ -2,20 +2,16 @@ environment:
   native:
     - recipe: docker
       version: 1.5-1build1
-    - recipe: git
     - recipe: python3.7
-    - recipe: python3-pip
+      version: 3.7.3
   build-modules:
     - name: pipenv
       type: script
       steps:
-        - "rm /usr/bin/python3"
-        - "ln -s /usr/bin/python3.7 /usr/bin/python3"
         - "pip3 install pipenv"
       triggers:
         native:
           - python3.7
-          - python3-pip
     - name: python-deps
       type: script
       steps:
@@ -26,13 +22,11 @@ environment:
           - Pipfile.lock
         modules:
           - pipenv
-actions:
-  - name: lint
-    script: 'pipenv run black . ; pipenv run pylint envy'
-    help: 'lint the project'
-  - name: pylint
-    script: 'cd envy ; pylint envy'
-    help: 'run pylint alone'
-  - name: black
-    script: 'black .'
-    help: 'run black alone'
+    - name: other-executables
+      type: remote
+      url: https://magmastone.net/some_file.sh
+    - name: one-time-example
+      type: script
+      steps:
+        - "scripts/seed_db.sh"
+      triggers: once # only runs once ever. state file stored in .envy by default

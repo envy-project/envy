@@ -143,7 +143,8 @@ disable=print-statement,
         deprecated-sys-function,
         exception-escape,
         comprehension-escape,
-        missing-docstring
+        missing-docstring,
+        bad-whitespace
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -254,6 +255,8 @@ good-names=i,
            ok,
            up,
            e,
+           t,
+           m,
            r,
            f,
            _
@@ -308,7 +311,8 @@ variable-naming-style=snake_case
 # List of note tags to take in consideration, separated by a comma.
 notes=FIXME,
       XXX,
-      TODO
+      TODO,
+      NOTE
 
 
 [TYPECHECK]

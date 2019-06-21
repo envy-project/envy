@@ -2,8 +2,6 @@ import json
 import os
 import shutil
 
-from envy.lib.config import ENVY_CONFIG
-
 
 class EnvyState:
     """ Manages ENVy's state through some files in the project's root directory
@@ -22,37 +20,35 @@ class EnvyState:
         """
         shutil.rmtree(self.directory)
 
-    def did_environment_change(self) -> bool:
-        """ Compares the state's environment hash against the current config's environment hash.
-            Returns True if they don't match.
+    def get_image_hash(self) -> str:
+        return self.__get(["image", "md5"])
 
-        Returns:
-            bool -- The result
-        """
-        if self.get_environment_hash() is None:
-            return False
-        return ENVY_CONFIG.get_environment_hash() != self.get_environment_hash()
+    def set_image_hash(self, new_hash: str):
+        self.__set(["image", "md5"], new_hash)
 
-    def get_environment_hash(self) -> str:
-        self.__get(["environment", "md5"])
+    def get_container_hash(self) -> str:
+        return self.__get(["container", "md5"])
 
-    def set_environment_hash(self, new_hash):
-        self.__set(["environment", "md5"], new_hash)
+    def set_container_hash(self, new_hash: str):
+        self.__set(["container", "md5"], new_hash)
 
-    def update_environment_hash(self):
-        self.set_environment_hash(ENVY_CONFIG.get_environment_hash())
-
-    def get_container_id(self):
+    def get_container_id(self) -> str:
         return self.__get(["container", "dockerid"])
 
-    def set_container_id(self, new_id):
+    def set_container_id(self, new_id: str):
         self.__set(["container", "dockerid"], new_id)
 
-    def get_image_id(self):
+    def get_image_id(self) -> str:
         return self.__get(["image", "dockerid"])
 
-    def set_image_id(self, new_id):
+    def set_image_id(self, new_id: str):
         self.__set(["image", "dockerid"], new_id)
+
+    def get_watchfile_hash(self, file: str) -> str:
+        return self.__get(["watchfile", file])
+
+    def set_watchfile_hash(self, file: str, new_hash: str):
+        self.__set(["watchfile", file], new_hash)
 
     def __set(self, keys, value):
         state = self.__get_state()
