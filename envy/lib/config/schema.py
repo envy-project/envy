@@ -2,7 +2,11 @@ import sys
 
 from schema import Schema, SchemaError, Optional, And, Or, Use
 
-_DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu", "package-manager": "apt"}
+_DEFAULT_PACKAGE_MANAGER = "apt"
+_DEFAULT_ENVIRONMENT_BASE = {
+    "image": "ubuntu:18.04",
+    "package-manager": _DEFAULT_PACKAGE_MANAGER,
+}
 
 _DEFAULT_ENVIRONMENT = {
     "base": _DEFAULT_ENVIRONMENT_BASE,
@@ -81,7 +85,7 @@ _SCHEMA = Schema(
             {
                 Optional("base", default=_DEFAULT_ENVIRONMENT_BASE): {
                     "image": str,
-                    Optional("package-manager"): str,
+                    Optional("package-manager", default=_DEFAULT_PACKAGE_MANAGER): str,
                 },
                 Optional("native", default=[]): [
                     {"recipe": str, Optional("version"): Or(str, int, float)}
