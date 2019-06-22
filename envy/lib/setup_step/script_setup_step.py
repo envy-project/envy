@@ -4,12 +4,12 @@ from .assignable_trigger_step import AssignableTriggerStep
 
 
 class ScriptSetupStep(AssignableTriggerStep):
-    def __init__(self, name: str, container: ContainerManager, steps: [str]):
+    def __init__(self, name: str, container: ContainerManager, scripts: [str]):
         super().__init__(name, container)
-        self._steps = steps
+        self._scripts = scripts
 
     def run(self):
         super().run()
 
-        for step in self._steps:
+        for step in self._scripts:
             self._container.exec(step)
