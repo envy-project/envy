@@ -7,35 +7,35 @@ _DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu:18.04", "package-manager": "apt"}
 _DEFAULT_ENVIRONMENT = {
     "base": _DEFAULT_ENVIRONMENT_BASE,
     "system-packages": [],
-    "build-modules": [],
+    "setup-steps": [],
 }
 
 _BUILD_MODULE_NOWATCH_TYPES = ["script", "remote"]
 
 _BUILD_MODULE_TRIGGERS = ["once", "always"]
 
-_DEFAULT_BM_TRIGGERS = {"system-packages": [], "files": [], "modules": []}
+_DEFAULT_BM_TRIGGERS = {"system-packages": [], "files": [], "steps": []}
 
 
-def __validate_build_module(module: {}) -> bool:
-    """ Validates that the given build module contains the appropriate keys given its type
+def __validate_setup_step(step: {}) -> bool:
+    """ Validates that the given build step contains the appropriate keys given its type
 
     Arguments:
-        module {{}} -- The build module dictionary
+        step {{}} -- The build step dictionary
 
     Returns:
         bool -- result
     """
-    if module["type"] == "script":
-        return "steps" in module
-    if module["type"] == "remote":
-        return "url" in module or "path" in module
+    if step["type"] == "script":
+        return "steps" in step
+    if step["type"] == "remote":
+        return "url" in step or "path" in step
     return False
 
 
-def __validate_environment_build_modules(environment: {}) -> bool:
-    """ Validates that the build modules in the given environment dictionary are valid.
-        Verifies that their names are unique, and that they only depend on previously defined modules and system packages
+def __validate_environment_setup_steps(environment: {}) -> bool:
+    """ Validates that the build steps in the given environment dictionary are valid.
+        Verifies that their names are unique, and that they only depend on previously defined steps and system packages
 
     Arguments:
         environment {{}} -- The environment dictionary
@@ -48,30 +48,28 @@ def __validate_environment_build_modules(environment: {}) -> bool:
         dep["recipe"] for dep in environment["system-packages"]
     }
 
-    seen_module_names = set()
+    seen_step_names = set()
 
-    for module in environment["build-modules"]:
-        if module["name"] in seen_module_names:
-            print("Module names must be unique")
+    for step in environment["setup-steps"]:
+        if step["name"] in seen_step_names:
+            print("Step names must be unique")
             return False
-        seen_module_names.add(module["name"])
+        seen_step_names.add(step["name"])
 
-        if isinstance(module["triggers"], list):
-            for system_package_trigger in module["triggers"]["system-packages"]:
+        if isinstance(step["triggers"], list):
+            for system_package_trigger in step["triggers"]["system-packages"]:
                 if system_package_trigger not in valid_system_package_names:
                     print(
                         "system package triggers can only depend on valid system packages"
                     )
                     return False
 
-            for module_trigger in module["triggers"]["modules"]:
-                if module_trigger not in seen_module_names:
-                    print(
-                        "Module triggers can only depend on previously defined modules"
-                    )
+            for step_trigger in step["triggers"]["steps"]:
+                if step_trigger not in seen_step_names:
+                    print("Step triggers can only depend on previously defined steps")
                     return False
-                if module_trigger == module["name"]:
-                    print("Module triggers cannot depend on themselves")
+                if step_trigger == step["name"]:
+                    print("Step triggers cannot depend on themselves")
                     return False
 
     return True
@@ -88,7 +86,7 @@ _SCHEMA = Schema(
                 Optional("system-packages", default=[]): [
                     {"recipe": str, Optional("version"): Or(str, int, float)}
                 ],
-                Optional("build-modules", default=[]): [
+                Optional("setup-steps", default=[]): [
                     And(
                         {
                             "name": str,
@@ -106,16 +104,16 @@ _SCHEMA = Schema(
                                 {
                                     Optional("system-packages", default=[]): [str],
                                     Optional("files", default=[]): [str],
-                                    Optional("modules", default=[]): [str],
+                                    Optional("steps", default=[]): [str],
                                 },
                             ),
                             Or("steps", "url", "path", only_one=True): Or([str], str),
                         },
-                        __validate_build_module,
+                        __validate_setup_step,
                     )
                 ],
             },
-            __validate_environment_build_modules,
+            __validate_environment_setup_steps,
         ),
         Optional("actions", default=[]): [
             {"name": str, "script": str, "help": str, Optional("description"): str}

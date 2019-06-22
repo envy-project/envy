@@ -7,7 +7,7 @@ environment:
       version: 1.5-1build1
     - recipe: python3.7
       version: 3.7.3 # version used if specified
-  build-modules:
+  setup-steps:
     - name: pipenv
       type: script
       steps:
@@ -23,8 +23,8 @@ environment:
         files:
           - Pipfile # will rebuild whenever Pipfile is modified
           - Pipfile.lock # will rebuild whenever Pipfile.lock is modified
-        modules:
-          - pipenv # will rebuild whenever pipenv module is rebuilt
+        steps:
+          - pipenv # will rebuild whenever pipenv step is rebuilt
     - name: other-executables
       type: remote # will pull file from remote URL and execute
       url: https://magmastone.net/some_file.sh

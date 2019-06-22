@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from envy.lib.docker_manager import ContainerManager
 
 
-class BuildModule(ABC):
-    """ A Build Module is a build step for an ENVy environment image.
-        Build modules have a trigger, which tells the builder when they need to be run.
+class SetupStep(ABC):
+    """ A Build Step is a build step for an ENVy environment image.
+        Build steps have a trigger, which tells the builder when they need to be run.
 
     See Also: trigger.py
     """
@@ -21,7 +21,7 @@ class BuildModule(ABC):
 
     @abstractmethod
     def run(self):
-        """ Run this build module.
+        """ Run this build step.
             Does NOT check the trigger! Run should_trigger() first if you care.
         """
         self._has_run = True
@@ -40,7 +40,7 @@ class BuildModule(ABC):
         pass
 
     def has_built(self) -> bool:
-        """ Returns true if this build module has build within this ENVy run.
+        """ Returns true if this build step has build within this ENVy run.
 
         Returns:
             bool -- The result

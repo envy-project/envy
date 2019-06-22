@@ -5,42 +5,42 @@ from envy.lib.config import ENVY_CONFIG
 
 import envy.lib.triggers as triggers
 
-from .script_build_module import ScriptBuildModule
-from .remote_build_module import RemoteBuildModule
+from .script_setup_step import ScriptSetupStep
+from .remote_setup_step import RemoteSetupStep
 
 
 class Builder:
-    """ Runs triggered build modules on a container
+    """ Runs triggered build steps on a container
     """
 
     def __init__(self, container: ContainerManager):
         self.container = container
-        self.modules = OrderedDict()
+        self.steps = OrderedDict()
 
     def build(self):
-        # Create system packages module
-        self.__create_system_packages_module()
+        # Create system packages step
+        self.__create_system_packages_step()
 
-        # Create modules
-        self.__create_modules()
+        # Create steps
+        self.__create_steps()
 
-        # Run triggered modules
+        # Run triggered steps
         self.__run_triggered()
 
         # Persist triggers
         self.__persist_triggers()
 
-    def __create_system_packages_module(self):
+    def __create_system_packages_step(self):
         pass
 
-    def __create_modules(self):
-        for m in ENVY_CONFIG.get_build_modules():
-            # Create module
+    def __create_steps(self):
+        for m in ENVY_CONFIG.get_setup_steps():
+            # Create step
             name = m["name"]
             if m["type"] == "script":
-                module = ScriptBuildModule(name, self.container, m["steps"])
+                step = ScriptSetupStep(name, self.container, m["steps"])
             elif m["type"] == "remote":
-                module = RemoteBuildModule(name, self.container, m["url"])
+                step = RemoteSetupStep(name, self.container, m["url"])
 
             # Create and register triggers
             if m["triggers"] is not None:
@@ -56,27 +56,27 @@ class Builder:
                         # trigger_list.append(triggers.TriggerSystemPackage(t))
                     for t in m["triggers"]["files"]:
                         trigger_list.append(triggers.TriggerWatchfile(t))
-                    for t in m["triggers"]["modules"]:
-                        trigger_list.append(triggers.TriggerModule(self.modules[t]))
+                    for t in m["triggers"]["steps"]:
+                        trigger_list.append(triggers.TriggerStep(self.steps[t]))
 
                     trigger = triggers.TriggerGroup(trigger_list)
             else:
                 trigger = triggers.TriggerPerContainer()
 
-            module.set_trigger(trigger)
+            step.set_trigger(trigger)
 
-            # Add module to dict
-            self.modules[name] = module
+            # Add step to dict
+            self.steps[name] = step
 
     def __run_triggered(self):
-        for module in self.modules.values():
-            if module.should_trigger():
-                print("Running build module {}".format(module.name))
-                module.run()
+        for step in self.steps.values():
+            if step.should_trigger():
+                print("Running build step {}".format(step.name))
+                step.run()
             else:
-                print("Skipping build module {}".format(module.name))
+                print("Skipping build step {}".format(step.name))
 
     def __persist_triggers(self):
-        for module in self.modules.values():
-            if module.has_built():
-                module.persist_trigger()
+        for step in self.steps.values():
+            if step.has_built():
+                step.persist_trigger()

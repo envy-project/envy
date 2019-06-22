@@ -20,7 +20,7 @@ AUTHOR = "Envy Team"
 REQUIRES_PYTHON = ">=3.7.0"
 VERSION = "0.1.0"
 
-# What packages are required for this module to be executed?
+# What packages are required for this step to be executed?
 REQUIRED = ["docker", "schema", "dockerpty", "pyyaml", "requests"]
 DEPENDENCY_LINKS = [
     "git+https://github.com/deanrock/dockerpty@new-docker-library#egg=dockerpty"
@@ -44,7 +44,7 @@ try:
 except FileNotFoundError:
     long_description = DESCRIPTION
 
-# Load the package's __version__.py module as a dictionary.
+# Load the package's __version__.py step as a dictionary.
 about = {}
 if not VERSION:
     project_slug = NAME.lower().replace("-", "_").replace(" ", "_")

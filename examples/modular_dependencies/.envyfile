@@ -4,7 +4,7 @@ environment:
       version: 1.5-1build1
     - recipe: python3.7
       version: 3.7.3
-  build-modules:
+  setup-steps:
     - name: pipenv
       type: script
       steps:
@@ -20,7 +20,7 @@ environment:
         files:
           - Pipfile
           - Pipfile.lock
-        modules:
+        steps:
           - pipenv
     - name: other-executables
       type: remote

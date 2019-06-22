@@ -1,8 +1,8 @@
-from .package_manager_module import PackageManagerModule
+from .package_manager_step import PackageManagerStep
 
 
-class AptPackageManagerModule(PackageManagerModule):
-    """ An apt implementation for a Package Manager Module
+class AptPackageManagerStep(PackageManagerStep):
+    """ An apt implementation for a Package Manager Step
     """
 
     def updated_packages(self) -> [str]:

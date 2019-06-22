@@ -5,7 +5,7 @@ environment:
     - recipe: git
     - recipe: python3.7
     - recipe: python3-pip
-  build-modules:
+  setup-steps:
     - name: pipenv
       type: script
       steps:
@@ -24,7 +24,7 @@ environment:
         files:
           - Pipfile
           - Pipfile.lock
-        modules:
+        steps:
           - pipenv
 actions:
   - name: lint

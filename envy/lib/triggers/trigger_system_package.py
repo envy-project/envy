@@ -1,4 +1,4 @@
-from envy.lib.build_module.package_manager_module import PackageManagerModule
+from envy.lib.setup_step.package_manager_step import PackageManagerStep
 
 from .trigger import Trigger
 
@@ -8,14 +8,14 @@ class TriggerSystemPackage(Trigger):
         NOTE: Currently we don't reinstall system packages piecemeal, so this triggers whenever the image is rebuilt.
     """
 
-    def __init__(self, recipe: str, package_manager_module: PackageManagerModule):
+    def __init__(self, recipe: str, package_manager_step: PackageManagerStep):
         self.recipe = recipe
-        self.package_manager_module = package_manager_module
+        self.package_manager_step = package_manager_step
 
     def should_trigger(self) -> bool:
         if self.recipe in [
             package["recipe"]
-            for package in self.package_manager_module.updated_packages()
+            for package in self.package_manager_step.updated_packages()
         ]:
             return True
         return False
