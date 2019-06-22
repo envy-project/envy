@@ -38,7 +38,7 @@ class Builder:
             # Create step
             name = m["name"]
             if m["type"] == "script":
-                step = ScriptSetupStep(name, self.container, m["steps"])
+                step = ScriptSetupStep(name, self.container, m["run"])
             elif m["type"] == "remote":
                 step = RemoteSetupStep(name, self.container, m["url"])
 

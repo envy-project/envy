@@ -27,7 +27,7 @@ def __validate_setup_step(step: {}) -> bool:
         bool -- result
     """
     if step["type"] == "script":
-        return "steps" in step
+        return "run" in step
     if step["type"] == "remote":
         return "url" in step or "path" in step
     return False
@@ -107,7 +107,7 @@ _SCHEMA = Schema(
                                     Optional("steps", default=[]): [str],
                                 },
                             ),
-                            Or("steps", "url", "path", only_one=True): Or([str], str),
+                            Or("run", "url", "path", only_one=True): Or([str], str),
                         },
                         __validate_setup_step,
                     )

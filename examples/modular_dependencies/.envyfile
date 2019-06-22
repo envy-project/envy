@@ -7,14 +7,14 @@ environment:
   setup-steps:
     - name: pipenv
       type: script
-      steps:
+      run:
         - "pip3 install pipenv"
       triggers:
         system-packages:
           - python3.7
     - name: python-deps
       type: script
-      steps:
+      run:
         - "pipenv install -d"
       triggers:
         files:
@@ -27,6 +27,6 @@ environment:
       url: https://magmastone.net/some_file.sh
     - name: one-time-example
       type: script
-      steps:
+      run:
         - "scripts/seed_db.sh"
       triggers: once # only runs once ever. state file stored in .envy by default
