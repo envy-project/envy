@@ -1,9 +1,9 @@
 from envy.lib.docker_manager import ContainerManager
 
-from .assignable_trigger_module import AssignableTriggerModule
+from .assignable_trigger_step import AssignableTriggerStep
 
 
-class RemoteBuildModule(AssignableTriggerModule):
+class RemoteSetupStep(AssignableTriggerStep):
     def __init__(self, name: str, container: ContainerManager, url: str):
         super().__init__(name, container)
         self.url = url
@@ -11,4 +11,4 @@ class RemoteBuildModule(AssignableTriggerModule):
     def run(self):
         super().run()
 
-        print("WARNING: Remote Build Modules not implemented!")  # TODO
+        print("WARNING: Remote Build Steps not implemented!")  # TODO

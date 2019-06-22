@@ -12,5 +12,5 @@ class Trigger(ABC):
 
     @abstractmethod
     def persist_trigger(self):
-        """ Performs any actions required by this trigger when the associated build module has been run.
+        """ Performs any actions required by this trigger when the associated build step has been run.
         """

@@ -5,7 +5,7 @@ import argparse
 from envy.lib.config import ENVY_CONFIG
 from envy.lib.state import ENVY_STATE, create_directory_if_not_exists
 from envy.lib.docker_manager import ComposeManager, DockerManager
-from envy.lib.build_module import Builder
+from envy.lib.setup_step import Builder
 
 STATUS_MSG_NO_CONTAINER = "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
 STATUS_MSG_CONTAINER_STOPPED = (
@@ -36,8 +36,8 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
     container = docker_manager.ensure_container()
     container.ensure_running()
 
-    module_builder = Builder(container)
-    module_builder.build()
+    step_builder = Builder(container)
+    step_builder.build()
 
     ENVY_STATE.set_image_hash(ENVY_CONFIG.get_image_hash())
     ENVY_STATE.set_container_hash(ENVY_CONFIG.get_container_hash())

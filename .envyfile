@@ -1,30 +1,30 @@
 environment:
-  native:
+  system-packages:
     - recipe: docker
       version: 1.5-1build1
     - recipe: git
     - recipe: python3.7
     - recipe: python3-pip
-  build-modules:
+  setup-steps:
     - name: pipenv
       type: script
-      steps:
+      run:
         - "rm /usr/bin/python3"
         - "ln -s /usr/bin/python3.7 /usr/bin/python3"
         - "pip3 install pipenv"
       triggers:
-        native:
+        system-packages:
           - python3.7
           - python3-pip
     - name: python-deps
       type: script
-      steps:
+      run:
         - "pipenv install -d"
       triggers:
         files:
           - Pipfile
           - Pipfile.lock
-        modules:
+        steps:
           - pipenv
 actions:
   - name: lint

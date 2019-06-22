@@ -3,19 +3,19 @@ from abc import abstractmethod
 from envy.lib.triggers import Trigger
 from envy.lib.docker_manager import ContainerManager
 
-from .build_module import BuildModule
+from .setup_step import SetupStep
 
 
-class AssignableTriggerModule(BuildModule):
-    """ A Build Module that allows its trigger to be set
+class AssignableTriggerStep(SetupStep):
+    """ A Build Step that allows its trigger to be set
     """
 
     def __init__(self, name: str, container: ContainerManager):
-        super(AssignableTriggerModule, self).__init__(name, container)
+        super(AssignableTriggerStep, self).__init__(name, container)
         self._trigger = None
 
     def set_trigger(self, trigger: Trigger):
-        """ Sets the trigger for this build module
+        """ Sets the trigger for this build step
 
         Arguments:
             trigger {Trigger} -- The trigger

@@ -30,9 +30,9 @@ class EnvyConfig:
 
     def get_container_hash(self) -> str:
         return hashlib.md5(
-            json.dumps(
-                self.data["environment"]["build-modules"], sort_keys=True
-            ).encode("utf-8")
+            json.dumps(self.data["environment"]["setup-steps"], sort_keys=True).encode(
+                "utf-8"
+            )
         ).hexdigest()
 
     def get_base_image(self) -> str:
@@ -49,11 +49,11 @@ class EnvyConfig:
     def __guess_package_manager(self) -> str:
         return "apt"
 
-    def get_native_dependencies(self) -> [{}]:
-        return self.data["environment"]["native"]
+    def get_system_packages(self) -> [{}]:
+        return self.data["environment"]["system-packages"]
 
-    def get_build_modules(self) -> [{}]:
-        return self.data["environment"]["build-modules"]
+    def get_setup_steps(self) -> [{}]:
+        return self.data["environment"]["setup-steps"]
 
     def get_actions(self) -> [{}]:
         return self.data["actions"]
