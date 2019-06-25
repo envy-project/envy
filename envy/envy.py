@@ -150,26 +150,34 @@ def build_custom_command_parser(subparsers, name: str, info: {}):
 
 
 def get_parser(actions: [{}]) -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="ENVY DESCRIPTION TODO")
+    parser = argparse.ArgumentParser(
+        description="Use ENVy to set up and use your development environment"
+    )
     subparsers = parser.add_subparsers(dest="subparser_name")
     # Create 'up' parser
-    parser_up = subparsers.add_parser("up", help="ENVY UP HELP")
+    parser_up = subparsers.add_parser(
+        "up", help="Create and start the development environment"
+    )
     parser_up.set_defaults(func=up_command)
 
     # Create 'shell' parser
-    parser_shell = subparsers.add_parser("shell", help="ENVY SHELL HELP")
+    parser_shell = subparsers.add_parser(
+        "shell", help="Enter a shell in the development environment"
+    )
     parser_shell.set_defaults(func=shell_command)
 
     # Create 'down' parser
-    parser_down = subparsers.add_parser("down", help="ENVY DOWN HELP")
+    parser_down = subparsers.add_parser("down", help="Stop the development environment")
     parser_down.set_defaults(func=down_command)
 
     # Create 'nuke' parser
-    parser_nuke = subparsers.add_parser("nuke", help="ENVY NUKE HELP")
+    parser_nuke = subparsers.add_parser(
+        "nuke", help="Destroy all ENVy data for this project"
+    )
     parser_nuke.set_defaults(func=nuke_command)
 
     # Create 'status' parser
-    parser_status = subparsers.add_parser("status", help="ENVY STATUS HELP")
+    parser_status = subparsers.add_parser("status", help="Show ENVy status")
     parser_status.set_defaults(func=status_command)
 
     # Create parsers for arbitrary custom commands
