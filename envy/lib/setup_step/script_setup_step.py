@@ -11,5 +11,8 @@ class ScriptSetupStep(AssignableTriggerStep):
     def run(self):
         super().run()
 
-        for step in self._scripts:
-            self._container.exec(step)
+        if isinstance(self._scripts, str):
+            self._container.exec(self._scripts)
+        else:
+            for step in self._scripts:
+                self._container.exec(step)
