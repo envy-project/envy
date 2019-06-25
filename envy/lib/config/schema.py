@@ -115,9 +115,7 @@ _SCHEMA = Schema(
             },
             __validate_environment_setup_steps,
         ),
-        Optional("actions", default=[]): [
-            {"name": str, "script": str, "help": str, Optional("description"): str}
-        ],
+        Optional("actions", default=[]): [{"name": str, "script": str, "help": str}],
         Optional("services", default={}): {Optional("compose-file"): str},
     }
 )

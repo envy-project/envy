@@ -141,9 +141,7 @@ def run_script(_args: argparse.Namespace, unknown_args: [str], script: str):
 
 
 def build_custom_command_parser(subparsers, name: str, info: {}):
-    parser_custom = subparsers.add_parser(
-        name, help=info.get("help"), description=info.get("description")
-    )
+    parser_custom = subparsers.add_parser(name, help=info.get("help"), add_help=False)
     parser_custom.set_defaults(
         func=lambda args, unknown_args: run_script(args, unknown_args, info["script"])
     )
