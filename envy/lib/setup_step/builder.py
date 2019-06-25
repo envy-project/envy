@@ -43,25 +43,25 @@ class Builder:
                 step = RemoteSetupStep(name, self.container, m["url"])
 
             # Create and register triggers
-            if m["triggers"] is not None:
-                if m["triggers"] == "once":
-                    trigger = triggers.TriggerOnce(name)
-                elif m["triggers"] == "always":
-                    trigger = triggers.TriggerAlways()
-                else:
-                    trigger_list = []
-                    for t in m["triggers"]["system-packages"]:
-                        # TODO: swap this out once system packages aren't implemented in the image
-                        trigger_list.append(triggers.TriggerPerContainer())
-                        # trigger_list.append(triggers.TriggerSystemPackage(t))
-                    for t in m["triggers"]["files"]:
-                        trigger_list.append(triggers.TriggerWatchfile(t))
-                    for t in m["triggers"]["steps"]:
-                        trigger_list.append(triggers.TriggerStep(self.steps[t]))
-
-                    trigger = triggers.TriggerGroup(trigger_list)
+            if m["triggers"] == "once":
+                trigger = triggers.TriggerOnce(name)
+            elif m["triggers"] == "always":
+                trigger = triggers.TriggerAlways()
             else:
-                trigger = triggers.TriggerPerContainer()
+                trigger_list = []
+                for t in m["triggers"]["system-packages"]:
+                    # TODO: swap this out once system packages aren't implemented in the image
+                    trigger_list.append(triggers.TriggerPerContainer())
+                    # trigger_list.append(triggers.TriggerSystemPackage(t))
+                for t in m["triggers"]["files"]:
+                    trigger_list.append(triggers.TriggerWatchfile(t))
+                for t in m["triggers"]["steps"]:
+                    trigger_list.append(triggers.TriggerStep(self.steps[t]))
+
+                if trigger_list:
+                    trigger = triggers.TriggerGroup(trigger_list)
+                else:
+                    trigger = triggers.TriggerPerContainer()
 
             step.set_trigger(trigger)
 
