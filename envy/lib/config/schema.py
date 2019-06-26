@@ -10,11 +10,11 @@ _DEFAULT_ENVIRONMENT = {
     "setup-steps": [],
 }
 
-_BUILD_MODULE_NOWATCH_TYPES = ["script", "remote"]
+_STEP_TYPES = ["script", "remote"]
 
-_BUILD_MODULE_TRIGGERS = ["once", "always"]
+_SIMPLE_TRIGGERS = ["always"]
 
-_DEFAULT_BM_TRIGGERS = {"system-packages": [], "files": [], "steps": []}
+_DEFAULT_TRIGGERS = {"system-packages": [], "files": [], "steps": []}
 
 
 def __validate_setup_step(step: {}) -> bool:
@@ -91,15 +91,11 @@ _SCHEMA = Schema(
                         {
                             "name": str,
                             "type": And(
-                                str,
-                                Use(str.lower),
-                                lambda t: t in _BUILD_MODULE_NOWATCH_TYPES,
+                                str, Use(str.lower), lambda t: t in _STEP_TYPES
                             ),
-                            Optional("triggers", default=_DEFAULT_BM_TRIGGERS): Or(
+                            Optional("triggers", default=_DEFAULT_TRIGGERS): Or(
                                 And(
-                                    str,
-                                    Use(str.lower),
-                                    lambda t: t in _BUILD_MODULE_TRIGGERS,
+                                    str, Use(str.lower), lambda t: t in _SIMPLE_TRIGGERS
                                 ),
                                 {
                                     Optional("system-packages", default=[]): [str],
