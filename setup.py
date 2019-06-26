@@ -21,10 +21,14 @@ REQUIRES_PYTHON = ">=3.7.0"
 VERSION = "0.1.0"
 
 # What packages are required for this module to be executed?
-REQUIRED = ["docker", "schema", "dockerpty", "pyyaml", "requests"]
-DEPENDENCY_LINKS = [
-    "git+https://github.com/deanrock/dockerpty@new-docker-library#egg=dockerpty"
+REQUIRED = [
+    "docker",
+    "schema",
+    "dockerpty @ git+https://github.com/deanrock/dockerpty@new-docker-library#egg=dockerpty-git-1.0.0",
+    "pyyaml",
+    "requests",
 ]
+DEPENDENCY_LINKS = []
 
 # What packages are optional?
 EXTRAS = {}
