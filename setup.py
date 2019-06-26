@@ -12,9 +12,9 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = "envy"
+NAME = "envy-project"
 DESCRIPTION = "Create and manage developments environment."
-URL = ""
+URL = "https://github.com/envy-project/envy"
 EMAIL = "alex@magmastone.com"
 AUTHOR = "Envy Team"
 REQUIRES_PYTHON = ">=3.7.0"
