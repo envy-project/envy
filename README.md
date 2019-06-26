@@ -56,8 +56,6 @@ A `remote` type setup step is used for executing a shell script that can be pull
 #### Triggers
 The `triggers` key is optional, and controls how often the command is re-executed on `envy up`. By default, the command will only be run once per environment: it will only run again if the user executes `envy nuke`.
 
-A trigger can be defined as `once`. This is used for commands that should only ever be run once for the entire lifetime of the project. An example would be the seeding of a database: you populate it once, and you wouldn't want to overwrite your data each time you updated dependencies
-
 A trigger can be defined as `always`. This command will be run on every invocation of `envy up`.
 
 Alternatively, a trigger can be given an object detailing more complex trigger mechanisms, like so:

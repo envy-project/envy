@@ -28,8 +28,3 @@ environment:
     - name: other-executables
       type: remote # will pull file from remote URL and execute
       url: https://magmastone.net/some_file.sh
-    - name: one-time-example
-      type: script
-      run:
-        - "scripts/seed_db.sh"
-      triggers: once # only runs once ever. state file stored in .envy by default

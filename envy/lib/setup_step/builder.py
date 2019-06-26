@@ -43,9 +43,7 @@ class Builder:
                 step = RemoteSetupStep(name, self.container, m["url"])
 
             # Create and register triggers
-            if m["triggers"] == "once":
-                trigger = triggers.TriggerOnce(name)
-            elif m["triggers"] == "always":
+            if m["triggers"] == "always":
                 trigger = triggers.TriggerAlways()
             else:
                 trigger_list = []
