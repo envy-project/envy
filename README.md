@@ -10,7 +10,7 @@ The top level of the file contains 3 keys: environment, actions, and services.
 
 ## Environment:
 ### base:
-This contains the information for the base system to be running. If not specified, ENVy will use a standard Ubuntu system
+This contains the information for the base system to be running. If not specified, ENVy will use Ubuntu 18
 
     image: <The docker image that the environment should be built off of>
 
@@ -23,7 +23,7 @@ This might look like:
 ### system-packages:
 The list of packages that your project needs that would come from a package manager (ex. `apt` in Ubuntu)
 
-Each entry in the list will should be an object of the following form:
+Each entry in the list should be an object of the following form:
 
     package: <The name of the package>
     version: <Optional: A version string to pin this package to>
@@ -37,7 +37,7 @@ An example config might look like
     - package: python3
 
 ### setup-steps:
-The list of steps required to take the base system with the system packages and install the rest of the dependencies. This is where you'd put actions like installing python depenendencies or seeding a database.
+The list of steps required to take the base system with the system packages and install the rest of the dependencies. This is where you'd put actions like installing python dependencies or seeding a database.
 
     name: <The human-readable name given for this build step>
     type: <Either script or remote>
