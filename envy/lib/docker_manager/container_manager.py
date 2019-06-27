@@ -3,7 +3,7 @@ from docker import DockerClient
 from docker.models.containers import Container
 import dockerpty
 
-from envy.lib.config import ENVY_CONFIG_FILE_PATH, ENVY_CONFIG
+from envy.lib.config import ENVY_PROJECT_DIR, ENVY_CONFIG
 
 
 class ContainerNotFound(Exception):
@@ -39,7 +39,11 @@ class ContainerManager:
             name=ContainerManager.__generate_container_name(),
             network_mode="host",
             mounts=[
-                Mount("/project", str(ENVY_CONFIG_FILE_PATH.parent), type="bind"),
+                Mount(
+                    ENVY_CONFIG.get_project_mount_path(),
+                    str(ENVY_PROJECT_DIR),
+                    type="bind",
+                ),
                 Mount("/var/run/docker.sock", "/var/run/docker.sock", type="bind"),
             ],
         )
@@ -96,8 +100,8 @@ class ContainerManager:
         if not self.is_running():
             raise ContainerNotRunning()
 
-        command_inside_project = "/bin/bash -c 'cd /project; {}'".format(
-            command.replace("'", "'\\''")
+        command_inside_project = "/bin/bash -c 'cd {}; {}'".format(
+            ENVY_CONFIG.get_project_mount_path(), command.replace("'", "'\\''")
         )
         dockerpty.exec_command(
             self.docker_client, self.container_id, command_inside_project
