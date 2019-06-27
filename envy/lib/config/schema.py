@@ -4,8 +4,11 @@ from schema import Schema, SchemaError, Optional, And, Or, Use
 
 _DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu:18.04", "package-manager": "apt"}
 
+_DEFAULT_PROJECT_DIR = "/project"
+
 _DEFAULT_ENVIRONMENT = {
     "base": _DEFAULT_ENVIRONMENT_BASE,
+    "project-dir": _DEFAULT_PROJECT_DIR,
     "system-packages": [],
     "setup-steps": [],
 }
@@ -15,6 +18,20 @@ _STEP_TYPES = ["script", "remote"]
 _SIMPLE_TRIGGERS = ["always"]
 
 _DEFAULT_TRIGGERS = {"system-packages": [], "files": [], "steps": []}
+
+
+def __validate_project_dir(project_dir: str) -> bool:
+    if not project_dir:
+        print("Project directory cannot be empty")
+        return False
+    if project_dir[0] != "/":
+        print("Project directory must have an absolute root path")
+        return False
+    if len(project_dir) == 1:
+        print("Root is not a valid project directory")
+        return False
+
+    return True
 
 
 def __validate_setup_step(step: {}) -> bool:
@@ -83,6 +100,9 @@ _SCHEMA = Schema(
                     "image": str,
                     Optional("package-manager"): str,
                 },
+                Optional("project-dir", default=_DEFAULT_PROJECT_DIR): And(
+                    str, __validate_project_dir
+                ),
                 Optional("system-packages", default=[]): [
                     {"recipe": str, Optional("version"): Or(str, int, float)}
                 ],
