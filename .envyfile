@@ -1,21 +1,15 @@
 environment:
+  base:
+    image: python:3.7.3-slim-stretch
   system-packages:
     - recipe: docker
       version: 1.5-1build1
     - recipe: git
-    - recipe: python3.7
-    - recipe: python3-pip
   setup-steps:
     - name: pipenv
       type: script
       run:
-        - "rm /usr/bin/python3"
-        - "ln -s /usr/bin/python3.7 /usr/bin/python3"
         - "pip3 install pipenv"
-      triggers:
-        system-packages:
-          - python3.7
-          - python3-pip
     - name: python-deps
       type: script
       run:
@@ -31,8 +25,8 @@ actions:
     script: 'pipenv run black . ; pipenv run pylint envy'
     help: 'lint the project'
   - name: pylint
-    script: 'cd envy ; pylint envy'
+    script: 'pipenv run pylint envy'
     help: 'run pylint alone'
   - name: black
-    script: 'black .'
+    script: 'pipenv run black .'
     help: 'run black alone'

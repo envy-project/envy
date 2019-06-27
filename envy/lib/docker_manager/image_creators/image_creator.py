@@ -71,13 +71,9 @@ class ImageCreator(ABC):
             Returns:
                 string: the string representation of the Dockerfile
         """
-        d_file = "FROM " + self.base_image() + "\n"
-        d_file += "RUN " + self.get_package_string(packages) + "\n"
+        d_file = f"FROM {ENVY_CONFIG.get_base_image()}\n"
+        d_file += f"RUN {self.get_package_string(packages)}\n"
         return d_file
-
-    @abstractmethod
-    def base_image(self):
-        pass
 
     @abstractmethod
     def get_package_string(self, packages):
