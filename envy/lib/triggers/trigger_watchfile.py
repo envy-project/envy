@@ -1,4 +1,5 @@
 import hashlib
+import os
 
 from envy.lib.state import ENVY_STATE
 
@@ -26,9 +27,10 @@ class TriggerWatchfile(Trigger):
     def __compute_file_hash(self):
         md5 = hashlib.md5()
 
-        with open(self.watchfile, "rb") as f:
-            for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
-                md5.update(chunk)
+        if os.path.isfile(self.watchfile):
+            with open(self.watchfile, "rb") as f:
+                for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
+                    md5.update(chunk)
 
         return md5.hexdigest()
 
