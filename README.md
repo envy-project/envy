@@ -1,98 +1,75 @@
 ENVy
 ====
 
-ENVy is an environment manager that allows developers to get easily set up with a project, both by managing dependency installation and by making common workflows easily discoverable.
+ENVy is the easy way to build development environments. It allows maintainers to specify exactly the environment that contributors should be using, not just for packages for the language in use, but native system packages as well. No more following pages-long contributing guides, or trying to figure out the strange problem that only one user has, just run `envy up` and contributors can start writing code. It's like a virtualenv, but for **everything**!
 
-## Config Docs
-The ENVy config file contains all the information ENVy uses to manage your project. At the root of your project directory create a YAML file called `.envyfile`. Check out some example envyfiles [here](https://TODO.com).
+Check out our [main website](https://envy-project.github.io/) for more details on ENVy.
 
-The top level of the file contains 3 keys: environment, actions, and services.
+Installing ENVY
+---
 
-## Environment:
-### base:
-This contains the information for the base system to be running. If not specified, ENVy will use Ubuntu 18
+**Prerequisites**: You should have Docker installed and running (i.e. `docker ps` doesn't give you an error), as well as `docker-compose`, needed for some projects.
 
-    image: <The docker image that the environment should be built off of>
+You can install ENVy in a few different ways:
 
-(Note: we currently only support Ubuntu images)
-This might look like:
+*pip (recommended)*:
+   - The recommended installation method is to use Pip: `pip3 install envy-project`.
 
-    base:
-      image: ubuntu:18.04
+*from release (or master)*:
+   - Download a tar.gz release from [ENVy's Github release page](https://github.com/envy-project/envy/releases).
+   - Extract the archive (`tar -xzvf envy-*.tgz`)
+   - Install the package (`sudo setup.py install`)
 
-### system-packages:
-The list of packages that your project needs that would come from a package manager (ex. `apt` in Ubuntu)
+Using ENVy as a contributor
+---
 
-Each entry in the list should be an object of the following form:
+ENVy is a very simple tool to use. You can see all available commands by running `envy --help`. When you're working with a project, this help text will also contain all of the project-specific commands you can use (build, lint, etc.)
 
-    package: <The name of the package>
-    version: <Optional: A version string to pin this package to>
+ENVy itself also defines a few commands:
 
-An example config might look like
+- `envy up`: Create a development environment
 
-    system-packages:
-    - package: curl
-      version: 7.65.0
-    - package: wget
-    - package: python3
+When run inside of a project directory, this will create a development environment according to the maintainer's specifications. You will see progress output as the process continues. It will mount the project directory inside of the environment. You can leave this container running as long as you'd like - it consumes little to no resources.
 
-### setup-steps:
-The list of steps required to take the base system with the system packages and install the rest of the dependencies. This is where you'd put actions like installing python dependencies or seeding a database.
+```
+~ $ cd golang-hello-world
+golang-hello-world $ envy up
+Detected change in config environment.
+Creating ENVy environment image.
+Creating ENVy container
+ENVy environment is ready!
+```
 
-    name: <The human-readable name given for this build step>
-    type: <Either script or remote>
-    triggers: <The (optional) trigger for this action: see below>
+- `envy down`: Pause a development environment
 
-There are two kinds of steps.
+When run inside of a project directory, this will pause the development environment without deleting any data. You may want to run this when you're finished working on a project for a little while.
 
-A `script` type setup step is used for executing a list of shell commands inside the environment. This step has an additional `run` key:
 
-    run: <One or more shell commands to execute. Ex: 'npm run install'>
+```
+~ $ golang-hello-world $ envy down
+ENVy environment stopped.
+```
 
-A `remote` type setup step is used for executing a shell script that can be pulled from a remote location, such as installing `meteor`. This step type has an additional `url` key:
+- `envy nuke`: Delete a development environment
 
-    url: <The url to download the bash script from>
+When run inside of a project directory, this will remove the environment created by ENVy. This will not affect the project directory itself - you will not lose any work. This frees up storage space on your host computer. Note that depending on the project configuration, this could delete temporary data - such as a database in use for development.
 
-#### Triggers
-The `triggers` key is optional, and controls how often the command is re-executed on `envy up`. By default, the command will only be run once per environment: it will only run again if the user executes `envy nuke`.
+```
+~ $ golang-hello-world $ envy nuke
+ENVy environment destroyed.
+```
 
-A trigger can be defined as `always`. This command will be run on every invocation of `envy up`.
+Setting up your projects to use ENVy
+---
+Creating Envyfiles is easy! Please follow the [Maintainer's Guide](https://envy-project.github.io/maintainer-guide.html), or take a look at the [Envyfile Reference](https://envy-project.github.io/envyfile-reference.html). You may also find the [examples repository](https://github.com/envy-project/examples) to be a handy resource.
 
-Alternatively, a trigger can be given an object detailing more complex trigger mechanisms, like so:
+And, once you're done, please let us know how it went! If you've built an Envyfile for a new language or project type, consider opening an issue or a PR in our [examples repository](https://github.com/envy-project/examples) to help others out.
 
-    triggers:
-      system-packages: <A list of previously-defined system packages this step should trigger on. This will cause a re-run if the version of that package is changed>
-      files: <A list of files within the project's directory. This will cause a re-run when the contents of any of those files change. Ex: 'Pipfile' for a python dependencies step>
-      steps: <A list of previously-defined setup-steps. This will cause a re-run when any of the listed steps are themselves triggered for a re-run>
 
-An example trigger set might look like:
+Frequently Asked Questions
+---
 
-    triggers:
-      files:
-        - Pipfile
-        - Pipfile.lock
-      steps:
-        - pipenv
-
-Here, the setup step would run the first time in a clean environment, and then would re-trigger on `envy up` if Pipfile or Pipfile.lock changed, *or* if a previous step called `pipenv` was run.
-
-## Actions:
-A list of common workflows for the project. These would include anything from compiling a C++ application to linting a python project to starting up a web server. Anything that a developer would commonly do can be placed as an action, to be found with `envy --help`. Each action has a structure as follows:
-
-    name: <The sub-command name used on when invoking envy>
-    script: <The bash script executed in the environment for this action>
-    help: <The help message shown next to the command in envy --help>
-
-One such action could be linting javascript code:
-
-    actions:
-    - name: lint
-      script: 'eslint .'
-      help: 'lint the project'
-
-## Services
-ENVy can manage sidecar services for you using docker-compose. Point envy to your docker-compose file like so:
-
-    compose-file: <Name of docker-compose file in the project>
-
-The sidecar services will be started on `envy up`, and stopped on `envy down`
+- **Q: How does ENVy work?**
+  - ENVy helps projects by making it very easy for projects to use Docker for environment setup. Most aspects of managing Docker container lifecycles are handled transparently, without the need for project maintainers to think about what needs to happen at each step.
+- **Q: How can I support the project?**
+  - The best way to help ENVy is to _use it_! With your help, we can learn how projects use ENVy in the real world, and make your use cases easier for you to configure. Please file [issues](https://github.com/envy-project/envy/issues) for any problems you encounter!
