@@ -7,6 +7,7 @@ import envy.lib.triggers as triggers
 
 from .script_setup_step import ScriptSetupStep
 from .remote_setup_step import RemoteSetupStep
+from .apt_package_manager_step import AptPackageManagerStep
 
 
 class Builder:
@@ -16,6 +17,7 @@ class Builder:
     def __init__(self, container: ContainerManager):
         self.container = container
         self.steps = OrderedDict()
+        self.system_package_step = None
 
     def build(self):
         # Create system packages step
@@ -31,7 +33,10 @@ class Builder:
         self.__persist_triggers()
 
     def __create_system_packages_step(self):
-        pass
+        self.system_package_step = AptPackageManagerStep(
+            self.container, ENVY_CONFIG.get_system_packages()
+        )
+        self.steps[self.system_package_step.name] = self.system_package_step
 
     def __create_steps(self):
         for m in ENVY_CONFIG.get_setup_steps():
@@ -48,18 +53,15 @@ class Builder:
             else:
                 trigger_list = []
                 for t in m["triggers"]["system-packages"]:
-                    # TODO: swap this out once system packages aren't implemented in the image
-                    trigger_list.append(triggers.TriggerPerContainer())
-                    # trigger_list.append(triggers.TriggerSystemPackage(t))
+                    trigger_list.append(
+                        triggers.TriggerSystemPackage(t, self.system_package_step)
+                    )
                 for t in m["triggers"]["files"]:
                     trigger_list.append(triggers.TriggerWatchfile(t))
                 for t in m["triggers"]["steps"]:
                     trigger_list.append(triggers.TriggerStep(self.steps[t]))
 
-                if trigger_list:
-                    trigger = triggers.TriggerGroup(trigger_list)
-                else:
-                    trigger = triggers.TriggerPerContainer()
+                trigger = triggers.TriggerGroup(trigger_list)
 
             step.set_trigger(trigger)
 

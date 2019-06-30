@@ -18,7 +18,7 @@ class ContainerManager:
     ### Static Container Creation ###
     @staticmethod
     def __generate_container_name() -> str:
-        return "envy-" + ENVY_CONFIG.get_container_hash() + "-container"
+        return f"envy-{ENVY_PROJECT_DIR.name}-container"
 
     @staticmethod
     def create(docker_client: DockerClient, image_id: str) -> "ContainerManager":

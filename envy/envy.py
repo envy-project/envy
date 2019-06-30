@@ -21,17 +21,10 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
         docker_manager.print_connection_err()
         return
 
-    if (
-        ENVY_STATE.get_image_hash() != ENVY_CONFIG.get_image_hash()
-        or ENVY_STATE.get_container_hash() != ENVY_CONFIG.get_container_hash()
-    ):
-        if ENVY_STATE.get_image_id:
-            print(
-                "Detected change in config environment. Re-creating ENVy environment."
-            )
-            docker_manager.nuke()
-            ENVY_STATE.nuke()
-            create_directory_if_not_exists()
+    if not ENVY_STATE.get_container_id():
+        print("No environment detected. Creating ENVy environment.")
+        docker_manager.create_container()
+        create_directory_if_not_exists()
 
     container = docker_manager.ensure_container()
     container.ensure_running()
@@ -39,8 +32,6 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
     step_builder = Builder(container)
     step_builder.build()
 
-    ENVY_STATE.set_image_hash(ENVY_CONFIG.get_image_hash())
-    ENVY_STATE.set_container_hash(ENVY_CONFIG.get_container_hash())
     print(STATUS_MSG_CONTAINER_READY)
 
     compose_path = ENVY_CONFIG.get_services_compose_path()

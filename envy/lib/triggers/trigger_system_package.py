@@ -5,7 +5,7 @@ from .trigger import Trigger
 
 class TriggerSystemPackage(Trigger):
     """ Triggers whenever the given system package is reinstalled.
-        NOTE: Currently we don't reinstall system packages piecemeal, so this triggers whenever the image is rebuilt.
+        NOTE: Currently we don't reinstall system packages piecemeal, so this triggers whenever any package changes
     """
 
     def __init__(self, recipe: str, package_manager_step: PackageManagerStep):

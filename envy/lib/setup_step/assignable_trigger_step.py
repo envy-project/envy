@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from envy.lib.triggers import Trigger
+from envy.lib.state import ENVY_STATE
 from envy.lib.docker_manager import ContainerManager
 
 from .setup_step import SetupStep
@@ -28,12 +29,16 @@ class AssignableTriggerStep(SetupStep):
         Returns:
             bool -- The result
         """
+        if self.name not in ENVY_STATE.get_run_steps():
+            return True
+
         if self._trigger:
             return self._trigger.should_trigger()
 
         return False
 
     def persist_trigger(self):
+        ENVY_STATE.add_run_step(self.name)
         if self._trigger:
             self._trigger.persist_trigger()
 
