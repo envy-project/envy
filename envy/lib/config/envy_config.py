@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import Optional
 
-import hashlib
-import json
 import yaml
 
 from .schema import validate as validate_schema

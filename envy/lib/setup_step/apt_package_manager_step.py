@@ -1,6 +1,6 @@
-from .package_manager_step import PackageManagerStep
-
 from envy.lib.state import ENVY_STATE
+
+from .package_manager_step import PackageManagerStep
 
 
 class AptPackageManagerStep(PackageManagerStep):
