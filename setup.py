@@ -15,16 +15,16 @@ from setuptools import find_packages, setup, Command
 NAME = "envy-project"
 DESCRIPTION = "Create and manage developments environment."
 URL = "https://github.com/envy-project/envy"
-EMAIL = "alex@magmastone.com"
+EMAIL = "alex@magmastone.net"
 AUTHOR = "Envy Team"
 REQUIRES_PYTHON = ">=3.7.0"
-VERSION = "0.1.0"
+VERSION = "0.1.2"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
     "docker",
     "schema",
-    "dockerpty @ git+https://github.com/deanrock/dockerpty@new-docker-library#egg=dockerpty-git-1.0.0",
+    "envy-project-dockerpty-republish",
     "pyyaml",
     "requests",
 ]

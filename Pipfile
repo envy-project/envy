@@ -8,7 +8,6 @@ pylint = "==2.3.1"
 black = "*"
 
 [packages]
-dockerpty = {editable = true,git = "https://github.com/deanrock/dockerpty",ref = "new-docker-library"}
 envy = {editable = true,path = "."}
 
 [pipenv]
