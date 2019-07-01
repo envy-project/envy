@@ -10,8 +10,8 @@ class PackageManagerStep(SetupStep):
     system package dependencies for an ENVy environment image.
     """
 
-    def __init__(self, name: str, container: ContainerManager, packages: [{}]):
-        super(PackageManagerStep, self).__init__(name, container)
+    def __init__(self, container: ContainerManager, packages: [{}]):
+        super(PackageManagerStep, self).__init__("System Packages", container)
         self._packages = packages
 
     @abstractmethod

@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import Optional
 
-import hashlib
-import json
 import yaml
 
 from .schema import validate as validate_schema
@@ -22,26 +20,6 @@ class EnvyConfig:
             raw_data = yaml.safe_load(f)
 
         self.data = validate_schema(raw_data)
-
-    def get_image_hash(self) -> str:
-        relevant_dict = {
-            "base": self.data["environment"]["base"],
-            "system-packages": self.data["environment"]["system-packages"],
-        }
-
-        return hashlib.md5(
-            json.dumps(relevant_dict, sort_keys=True).encode("utf-8")
-        ).hexdigest()
-
-    def get_container_hash(self) -> str:
-        relevant_dict = {
-            "steup-steps": self.data["environment"]["setup-steps"],
-            "project-dir": self.data["environment"]["project-dir"],
-        }
-
-        return hashlib.md5(
-            json.dumps(relevant_dict, sort_keys=True).encode("utf-8")
-        ).hexdigest()
 
     def get_base_image(self) -> str:
         return self.data["environment"]["base"]["image"]

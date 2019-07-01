@@ -8,7 +8,6 @@ class EnvyState:
         Currently tracking:
             Environment hash: a hash of ENVy's environment config
             Container ID: the current ENVy environment container
-            Image ID: the current ENVy environment image
     """
 
     def __init__(self, dir_path):
@@ -20,29 +19,26 @@ class EnvyState:
         """
         shutil.rmtree(self.directory)
 
-    def get_image_hash(self) -> str:
-        return self.__get(["image", "md5"])
-
-    def set_image_hash(self, new_hash: str):
-        self.__set(["image", "md5"], new_hash)
-
-    def get_container_hash(self) -> str:
-        return self.__get(["container", "md5"])
-
-    def set_container_hash(self, new_hash: str):
-        self.__set(["container", "md5"], new_hash)
-
     def get_container_id(self) -> str:
         return self.__get(["container", "dockerid"])
 
     def set_container_id(self, new_id: str):
         self.__set(["container", "dockerid"], new_id)
 
-    def get_image_id(self) -> str:
-        return self.__get(["image", "dockerid"])
+    def get_installed_packages(self):
+        return self.__get(["packages"])
 
-    def set_image_id(self, new_id: str):
-        self.__set(["image", "dockerid"], new_id)
+    def set_installed_packages(self, packages: [{}]):
+        self.__set(["packages"], packages)
+
+    def get_run_steps(self):
+        return self.__get(["run_steps"]) or []
+
+    def add_run_step(self, name):
+        steps = self.get_run_steps()
+        if name not in steps:
+            steps.append(name)
+            self.__set(["run_steps"], steps)
 
     def get_watchfile_hash(self, file: str) -> str:
         return self.__get(["watchfile", file])

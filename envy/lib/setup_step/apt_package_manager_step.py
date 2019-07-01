@@ -1,3 +1,5 @@
+from envy.lib.state import ENVY_STATE
+
 from .package_manager_step import PackageManagerStep
 
 
@@ -12,24 +14,22 @@ class AptPackageManagerStep(PackageManagerStep):
         return []
 
     def should_trigger(self) -> bool:
-        # TODO: this needs to be implemented before this class is used
-        raise NotImplementedError
+        return ENVY_STATE.get_installed_packages() != self._packages
 
     def persist_trigger(self):
-        # TODO: this needs to be implemented before this class is used
-        raise NotImplementedError
+        ENVY_STATE.set_installed_packages(self._packages)
 
     def run(self):
         super().run()
         versioned_packages = [
             "{}={}".format(package["recipe"], package["version"])
-            if package["version"]
+            if "version" in package
             else package["recipe"]
             for package in self._packages
         ]
 
         apt_string = " ".join(
-            [versioned_package["recipe"] for versioned_package in versioned_packages]
+            [versioned_package for versioned_package in versioned_packages]
         )
         self._container.exec(
             "apt-get update && apt-get install -y {} && rm -rf /var/lib/apt/lists/*".format(
