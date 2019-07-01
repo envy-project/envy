@@ -1,3 +1,5 @@
+from hashlib import md5
+
 from docker.types import Mount
 from docker import DockerClient
 from docker.models.containers import Container
@@ -18,7 +20,7 @@ class ContainerManager:
     ### Static Container Creation ###
     @staticmethod
     def __generate_container_name() -> str:
-        return f"envy-{ENVY_PROJECT_DIR.name}-container"
+        return f"envy-{ENVY_PROJECT_DIR.name}-{md5(str(ENVY_PROJECT_DIR).encode()).hexdigest()}-container"
 
     @staticmethod
     def create(docker_client: DockerClient, image_id: str) -> "ContainerManager":
