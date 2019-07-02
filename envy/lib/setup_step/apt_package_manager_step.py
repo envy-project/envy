@@ -32,7 +32,7 @@ class AptPackageManagerStep(PackageManagerStep):
             [versioned_package for versioned_package in versioned_packages]
         )
         self._container.exec(
-            "apt-get update && apt-get install -y {} && rm -rf /var/lib/apt/lists/*".format(
+            'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y {} && rm -rf /var/lib/apt/lists/*'.format(
                 apt_string
             )
         )
