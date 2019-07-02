@@ -1,4 +1,5 @@
 from hashlib import md5
+from pathlib import Path
 
 from docker.types import Mount
 from docker import DockerClient
@@ -89,12 +90,12 @@ class ContainerManager:
 
         return bool("running" in container.status)
 
-    def exec(self, command: str):
+    def exec(self, command: str, relpath: str = None):
         """ Executes the command in the container
 
         Arguments:
             command {str} -- The command to run. Usually /bin/bash <>
-
+            relpath {str} -- Relative path to project root to enter before executing. Optional, defaults to none.
         Raises:
             ContainerNotFound: The container was not found
             ContainerNotRunning: The container was not running
@@ -102,8 +103,12 @@ class ContainerManager:
         if not self.is_running():
             raise ContainerNotRunning()
 
+        cdto = ENVY_CONFIG.get_project_mount_path()
+        if relpath is not None:
+            cdto = Path(ENVY_CONFIG.get_project_mount_path(), relpath)
+
         command_inside_project = "/bin/bash -c 'cd {}; {}'".format(
-            ENVY_CONFIG.get_project_mount_path(), command.replace("'", "'\\''")
+            cdto, command.replace("'", "'\\''")
         )
         dockerpty.exec_command(
             self.docker_client, self.container_id, command_inside_project
