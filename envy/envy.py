@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 
 import argparse
+import time
 
 from envy.lib.config import ENVY_CONFIG, ENVY_CURRENT_RELATIVE_PATH
 from envy.lib.state import ENVY_STATE, create_directory_if_not_exists
 from envy.lib.docker_manager import ComposeManager, DockerManager
 from envy.lib.setup_step import Builder
+from envy.lib.io import PrettyPrinter
 
 STATUS_MSG_NO_CONTAINER = "ENVy has not been initialized for this project. Please run `envy up` to install the ENVy environment."
 STATUS_MSG_CONTAINER_STOPPED = (
@@ -15,29 +17,40 @@ STATUS_MSG_CONTAINER_READY = "ENVy environment is ready!"
 
 
 def up_command(_args: argparse.Namespace, _unknow_args: [str]):
-    docker_manager = DockerManager()
+    printer = PrettyPrinter()
+    try:
+        printer.start_step("Finding Docker Container")
+        docker_manager = DockerManager()
+        printer.end_step()
 
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
 
-    if not ENVY_STATE.get_container_id():
-        print("No environment detected. Creating ENVy environment.")
-        docker_manager.create_container()
-        create_directory_if_not_exists()
+        if not ENVY_STATE.get_container_id():
+            printer.start_step("No environment detected. Creating ENVy environment.")
+            docker_manager.create_container()
+            create_directory_if_not_exists()
+            printer.end_step()
 
-    container = docker_manager.ensure_container()
-    container.ensure_running()
+        printer.start_step("Starting Container")
+        container = docker_manager.ensure_container()
+        container.ensure_running()
+        printer.end_step()
 
-    step_builder = Builder(container)
-    step_builder.build()
+        printer.start_step("Performing Build Modules")
+        step_builder = Builder(container)
+        step_builder.build()
+        printer.end_step()
 
-    print(STATUS_MSG_CONTAINER_READY)
-
-    compose_path = ENVY_CONFIG.get_services_compose_path()
-    if compose_path:
-        ComposeManager(compose_path).up()
-        print("Sidecar services started")
+        compose_path = ENVY_CONFIG.get_services_compose_path()
+        if compose_path:
+            printer.start_step("Starting Sidecar Services")
+            ComposeManager(compose_path).up()
+            printer.end_step()
+    finally:
+        time.sleep(1)
+        printer.end()
 
 
 def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
@@ -61,22 +74,33 @@ def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
 
 
 def down_command(_args: argparse.Namespace, _unknown_args: [str]):
-    docker_manager = DockerManager()
+    printer = PrettyPrinter()
+    try:
+        printer.start_step("Connecting to Docker")
+        docker_manager = DockerManager()
+        printer.end_step()
 
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
 
-    container = docker_manager.get_container()
-    if container:
-        container.ensure_stopped()
+        printer.start_step("Finding Docker Container")
+        container = docker_manager.get_container()
+        printer.end_step()
 
-    print("ENVy environment stopped")
+        if container:
+            printer.start_step("Stopping Docker Container")
+            container.ensure_stopped()
+            printer.end_step()
 
-    compose_path = ENVY_CONFIG.get_services_compose_path()
-    if compose_path:
-        ComposeManager(compose_path).down()
-        print("Sidecar services stopped")
+        compose_path = ENVY_CONFIG.get_services_compose_path()
+        if compose_path:
+            printer.start_step("Stopping Sidecar Services")
+            ComposeManager(compose_path).down()
+            printer.end_step()
+    finally:
+        time.sleep(1)
+        printer.end()
 
 
 def nuke_command(_args: argparse.Namespace, _unknown_args: [str]):
