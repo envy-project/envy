@@ -8,6 +8,7 @@ environment:
   setup-steps:
     - name: pipenv
       type: script
+      as_user: false
       run:
         - "pip3 install pipenv"
     - name: python-deps

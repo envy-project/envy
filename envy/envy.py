@@ -57,7 +57,7 @@ def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
         print(STATUS_MSG_CONTAINER_STOPPED)
         return
 
-    container.exec("/bin/bash")
+    container.exec("/bin/bash", True)
 
 
 def down_command(_args: argparse.Namespace, _unknown_args: [str]):
@@ -128,7 +128,7 @@ def run_script(_args: argparse.Namespace, unknown_args: [str], script: str):
         print(STATUS_MSG_CONTAINER_STOPPED)
     else:
         command = "{} {}".format(script, " ".join(unknown_args))
-        container.exec(command)
+        container.exec(command, True)
 
 
 def build_custom_command_parser(subparsers, name: str, info: {}):

@@ -123,6 +123,7 @@ _SCHEMA = Schema(
                                     Optional("steps", default=[]): [str],
                                 },
                             ),
+                            Optional("as_user", default=True): bool,
                             Or("run", "url", "path", only_one=True): Or([str], str),
                         },
                         __validate_setup_step,
