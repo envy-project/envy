@@ -2,7 +2,7 @@
 
 import argparse
 
-from envy.lib.config import ENVY_CONFIG
+from envy.lib.config import ENVY_CONFIG, ENVY_CURRENT_RELATIVE_PATH
 from envy.lib.state import ENVY_STATE, create_directory_if_not_exists
 from envy.lib.docker_manager import ComposeManager, DockerManager
 from envy.lib.setup_step import Builder
@@ -57,7 +57,7 @@ def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
         print(STATUS_MSG_CONTAINER_STOPPED)
         return
 
-    container.exec("/bin/bash", True)
+    container.exec("/bin/bash", as_user=True, relpath=str(ENVY_CURRENT_RELATIVE_PATH))
 
 
 def down_command(_args: argparse.Namespace, _unknown_args: [str]):
@@ -113,7 +113,12 @@ def status_command(_args: argparse.Namespace, _unknown_args: [str]):
         print("ENVy environment is running!")
 
 
-def run_script(_args: argparse.Namespace, unknown_args: [str], script: str):
+def run_script(
+    _args: argparse.Namespace,
+    unknown_args: [str],
+    script: str,
+    disable_relpath: bool = False,
+):
     docker_manager = DockerManager()
 
     if not docker_manager.connection_ok():
@@ -128,13 +133,19 @@ def run_script(_args: argparse.Namespace, unknown_args: [str], script: str):
         print(STATUS_MSG_CONTAINER_STOPPED)
     else:
         command = "{} {}".format(script, " ".join(unknown_args))
-        container.exec(command, True)
+
+        cdto = ENVY_CURRENT_RELATIVE_PATH
+        if disable_relpath:
+            cdto = None
+        container.exec(command, True, cdto)
 
 
 def build_custom_command_parser(subparsers, name: str, info: {}):
     parser_custom = subparsers.add_parser(name, help=info.get("help"), add_help=False)
     parser_custom.set_defaults(
-        func=lambda args, unknown_args: run_script(args, unknown_args, info["script"])
+        func=lambda args, unknown_args: run_script(
+            args, unknown_args, info["script"], info["disable_relpath"]
+        )
     )
 
 

@@ -17,3 +17,14 @@ def find_config_file() -> Path:
         if current_path == current_path.parent:
             break
         current_path = current_path.parent
+
+
+def find_relative_cwd() -> Path:
+    """ Finds the relative current working directory based on the root of the ENVy project.
+        Does not return a Path as the result is *not* a useful path object.
+
+    Returns:
+        [Path] -- relative path to cwd from project root
+    """
+    cwd = Path.cwd()
+    return cwd.relative_to(find_config_file().parent)

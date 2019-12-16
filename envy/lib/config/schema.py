@@ -132,7 +132,14 @@ _SCHEMA = Schema(
             },
             __validate_environment_setup_steps,
         ),
-        Optional("actions", default=[]): [{"name": str, "script": str, "help": str}],
+        Optional("actions", default=[]): [
+            {
+                "name": str,
+                "script": str,
+                "help": str,
+                Optional("disable_relpath", default=False): bool,
+            }
+        ],
         Optional("services", default={}): {Optional("compose-file"): str},
     }
 )
