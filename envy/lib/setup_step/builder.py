@@ -23,6 +23,9 @@ class Builder:
         # Create system packages step
         self.__create_system_packages_step()
 
+        # Create initial-setup step
+        self.__create_initial_setup_steps()
+
         # Create steps
         self.__create_steps()
 
@@ -38,12 +41,19 @@ class Builder:
         )
         self.steps[self.system_package_step.name] = self.system_package_step
 
+    def __create_initial_setup_steps(self):
+        # Hack to get some things to play nice with /root being home folder.
+        chmod_step = ScriptSetupStep(
+            "ENVY_chmod_root", self.container, "chmod a+wrx /root", False
+        )
+        self.steps[chmod_step.name] = chmod_step
+
     def __create_steps(self):
         for m in ENVY_CONFIG.get_setup_steps():
             # Create step
             name = m["name"]
             if m["type"] == "script":
-                step = ScriptSetupStep(name, self.container, m["run"])
+                step = ScriptSetupStep(name, self.container, m["run"], m["as_user"])
             elif m["type"] == "remote":
                 step = RemoteSetupStep(name, self.container, m["url"])
 

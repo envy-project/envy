@@ -1,6 +1,6 @@
 from hashlib import md5
+import os
 from pathlib import Path
-
 from docker.types import Mount
 from docker import DockerClient
 from docker.models.containers import Container
@@ -90,7 +90,7 @@ class ContainerManager:
 
         return bool("running" in container.status)
 
-    def exec(self, command: str, relpath: str = None):
+    def exec(self, command: str, as_user: bool = False, relpath: str = None):
         """ Executes the command in the container
 
         Arguments:
@@ -110,6 +110,17 @@ class ContainerManager:
         command_inside_project = "/bin/bash -c 'cd {}; {}'".format(
             cdto, command.replace("'", "'\\''")
         )
+
+        if as_user:
+            groups = ",".join(str(x) for x in os.getgroups())
+            userspec = str(os.getuid()) + ":" + str(os.getgid())
+            command_inside_project = "/usr/sbin/chroot --groups={} --userspec={} / /bin/bash --noprofile -c 'cd {}; {}'".format(
+                groups,
+                userspec,
+                ENVY_CONFIG.get_project_mount_path(),
+                command.replace("'", "'\\''"),
+            )
+
         dockerpty.exec_command(
             self.docker_client, self.container_id, command_inside_project
         )

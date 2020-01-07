@@ -57,7 +57,7 @@ def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
         print(STATUS_MSG_CONTAINER_STOPPED)
         return
 
-    container.exec("/bin/bash", relpath=str(ENVY_CURRENT_RELATIVE_PATH))
+    container.exec("/bin/bash", as_user=True, relpath=str(ENVY_CURRENT_RELATIVE_PATH))
 
 
 def down_command(_args: argparse.Namespace, _unknown_args: [str]):
@@ -133,10 +133,11 @@ def run_script(
         print(STATUS_MSG_CONTAINER_STOPPED)
     else:
         command = "{} {}".format(script, " ".join(unknown_args))
+
         cdto = ENVY_CURRENT_RELATIVE_PATH
         if disable_relpath:
             cdto = None
-        container.exec(command, cdto)
+        container.exec(command, True, cdto)
 
 
 def build_custom_command_parser(subparsers, name: str, info: {}):
