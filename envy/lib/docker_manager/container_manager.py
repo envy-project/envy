@@ -90,9 +90,6 @@ class ContainerManager:
 
         return bool("running" in container.status)
 
-    def exec(self, command: str, ):
-        """ Executes the command in the containers
-
     def exec(self, command: str, as_user: bool = False, relpath: str = None):
         """ Executes the command in the container
 
