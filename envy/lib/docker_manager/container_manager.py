@@ -121,9 +121,11 @@ class ContainerManager:
                 command.replace("'", "'\\''"),
             )
 
-        dockerpty.exec_command(
+        exit_code = dockerpty.exec_command(
             self.docker_client, self.container_id, command_inside_project
         )
+
+        return exit_code
 
     def ensure_running(self):
         """ Ensures that the container is running
