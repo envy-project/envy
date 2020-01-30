@@ -1,4 +1,5 @@
 import curses
+import re
 import sys
 
 
@@ -14,6 +15,7 @@ class PrettyPrinter:
 
         self.old_stdout = sys.stdout
         self.lines = []
+        self.whitespace_regex = re.compile("^\s+|\s+$")
         sys.stdout = self
 
     def end(self):
@@ -22,15 +24,26 @@ class PrettyPrinter:
 
         curses.endwin()
         sys.stdout = self.old_stdout
-        print(self.__get_final_step_text())
+        print(self.__get_final_summary())
 
-    def write(self, text: str):
+    def send(self, data: bytes):
+        """ Provide an interface for dockerpty to send data to
+        """
+
+        data = data.decode("utf-8", "replace")
+        return self.write(data)
+
+    def write(self, data: str):
         """ Override the default stdout write implementation.
         """
 
-        text = text.rstrip()
-        if text:
-            self.lines.append(text)
+        line = self.whitespace_regex.sub("", data)
+
+        if line:
+            self.lines.append(line)
+            self.__refresh()
+
+        return len(data)
 
     def isatty(self):
         """ Override the default stdout isatty implementaiton.
@@ -78,8 +91,8 @@ class PrettyPrinter:
 
         self.screen.refresh()
 
-    def __get_final_step_text(self):
-        """ Combine steps for final output after ending hte curses window.
+    def __get_final_summary(self):
+        """ Combine steps for final output after ending the curses window.
         """
 
         return "\n".join(
