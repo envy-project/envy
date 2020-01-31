@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import argparse
-import time
 
 from envy.lib.config import ENVY_CONFIG, ENVY_CURRENT_RELATIVE_PATH
 from envy.lib.state import ENVY_STATE, create_directory_if_not_exists

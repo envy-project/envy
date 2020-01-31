@@ -2,9 +2,11 @@ ENDC = "\033[0m"
 YELLOW = "\033[33m"
 GREEN = "\033[32m"
 
+
 class StepPrinter:
     """ Manages printing progress steps to stdout.
     """
+
     def __init__(self):
         self.current_step = ""
 
