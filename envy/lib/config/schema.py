@@ -113,6 +113,7 @@ _SCHEMA = Schema(
                             "type": And(
                                 str, Use(str.lower), lambda t: t in _STEP_TYPES
                             ),
+                            Optional("label", default=None): str,
                             Optional("triggers", default=_DEFAULT_TRIGGERS): Or(
                                 And(
                                     str, Use(str.lower), lambda t: t in _SIMPLE_TRIGGERS

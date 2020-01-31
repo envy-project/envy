@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Optional
 
 from envy.lib.triggers import Trigger
 from envy.lib.state import ENVY_STATE
@@ -11,8 +12,8 @@ class AssignableTriggerStep(SetupStep):
     """ A Build Step that allows its trigger to be set
     """
 
-    def __init__(self, name: str, container: ContainerManager):
-        super(AssignableTriggerStep, self).__init__(name, container)
+    def __init__(self, name: str, label: Optional[str], container: ContainerManager):
+        super(AssignableTriggerStep, self).__init__(name, label, container)
         self._trigger = None
 
     def set_trigger(self, trigger: Trigger):

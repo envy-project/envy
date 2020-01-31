@@ -11,7 +11,9 @@ class PackageManagerStep(SetupStep):
     """
 
     def __init__(self, container: ContainerManager, packages: [{}]):
-        super(PackageManagerStep, self).__init__("System Packages", container)
+        super(PackageManagerStep, self).__init__(
+            "System Packages", "Installing System Packages", container
+        )
         self._packages = packages
 
     @abstractmethod

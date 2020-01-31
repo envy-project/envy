@@ -25,6 +25,12 @@ class StepPrinter:
         print("{}{} {}{}".format(GREEN, self.current_step, u"\u2713", ENDC))
         self.current_step = ""
 
+    def skip_step(self, step: str):
+        """ Skip a step, printing 'Skipping step ...'
+        """
+
+        print("{}{} (already complete) {}{}".format(GREEN, step, u"\u2933", ENDC))
+
     def error(self, code):
         """ Print the most recently started step with an error code
         """
