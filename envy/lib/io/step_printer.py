@@ -11,14 +11,14 @@ class StepPrinter:
         self.current_step = ""
 
     def start_step(self, step: str):
-        """ Start a new step. This step will be displayed as 'step ...' until end_step is called
+        """ Start a new step, printing 'step ...'
         """
 
         self.current_step = step
         print("{}{} ...{}".format(YELLOW, self.current_step, ENDC))
 
     def end_step(self):
-        """ End the most recently started step. Print out 'step ✓'.
+        """ End the most recently started step, printing 'step ✓'.
         """
 
         print("{}{} {}{}".format(GREEN, self.current_step, u"\u2713", ENDC))
