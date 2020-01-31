@@ -8,3 +8,4 @@ Releasing
 - Sign artifacts with GPG key (usually Alex does this): gpg --armor --output wheel_name.whl.asc --detach-sig wheel_name.whl
 - Sign source with GPG key (usually Alex does this): gpg --armor --output source.tar.gz.asc --detach-sig source.tar.gz
 - Upload to pypi `python3 -m twine upload dist/*`
+- Draft and publish Github release, with changelog, include wheels, tar.gz, and signature files.
