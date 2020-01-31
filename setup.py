@@ -18,7 +18,7 @@ URL = "https://github.com/envy-project/envy"
 EMAIL = "alex@magmastone.net"
 AUTHOR = "Envy Team"
 REQUIRES_PYTHON = ">=3.7.0"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
