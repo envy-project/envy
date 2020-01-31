@@ -16,6 +16,7 @@ class ContainerNotFound(Exception):
 class ContainerNotRunning(Exception):
     pass
 
+
 class ContainerError(Exception):
     def __init__(self, code):
         super(ContainerError, self).__init__(code)

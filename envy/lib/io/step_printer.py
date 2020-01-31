@@ -29,5 +29,9 @@ class StepPrinter:
         """ Print the most recently started step with an error code
         """
 
-        print("{}{} exited with error code {} {}{}".format(RED, self.current_step, code, u"\u2717", ENDC))
+        print(
+            "{}{} exited with error code {} {}{}".format(
+                RED, self.current_step, code, u"\u2717", ENDC
+            )
+        )
         self.current_step = ""

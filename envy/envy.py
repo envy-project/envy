@@ -69,7 +69,9 @@ def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
             print(STATUS_MSG_CONTAINER_STOPPED)
             return
 
-        container.exec("/bin/bash", as_user=True, relpath=str(ENVY_CURRENT_RELATIVE_PATH))
+        container.exec(
+            "/bin/bash", as_user=True, relpath=str(ENVY_CURRENT_RELATIVE_PATH)
+        )
     except ContainerError as err:
         print("Shell exited with error code {}".format(err.code))
 
