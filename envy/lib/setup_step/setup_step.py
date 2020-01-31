@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from envy.lib.docker_manager import ContainerManager
 
@@ -10,14 +11,19 @@ class SetupStep(ABC):
     See Also: trigger.py
     """
 
-    def __init__(self, name: str, container: ContainerManager):
+    def __init__(self, name: str, label: Optional[str], container: ContainerManager):
         self._name = name
+        self._label = label or name
         self._container = container
         self._has_run = False
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def label(self):
+        return self._label
 
     @abstractmethod
     def run(self):

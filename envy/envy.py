@@ -27,7 +27,7 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
             return
 
         if not ENVY_STATE.get_container_id():
-            printer.start_step("No environment detected - Creating ENVy environment")
+            printer.start_step("Creating ENVy environment")
             docker_manager.create_container()
             create_directory_if_not_exists()
             printer.end_step()
@@ -37,10 +37,8 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
         container.ensure_running()
         printer.end_step()
 
-        printer.start_step("Performing Build Modules")
-        step_builder = Builder(container)
+        step_builder = Builder(container, printer)
         step_builder.build()
-        printer.end_step()
 
         compose_path = ENVY_CONFIG.get_services_compose_path()
         if compose_path:

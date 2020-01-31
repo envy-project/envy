@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from envy.lib.docker_manager import ContainerManager
+from envy.lib.io import StepPrinter
 from envy.lib.config import ENVY_CONFIG
 
 import envy.lib.triggers as triggers
@@ -14,8 +15,9 @@ class Builder:
     """ Runs triggered build steps on a container
     """
 
-    def __init__(self, container: ContainerManager):
+    def __init__(self, container: ContainerManager, printer: StepPrinter):
         self.container = container
+        self.printer = printer
         self.steps = OrderedDict()
         self.system_package_step = None
 
@@ -44,7 +46,11 @@ class Builder:
     def __create_initial_setup_steps(self):
         # Hack to get some things to play nice with /root being home folder.
         chmod_step = ScriptSetupStep(
-            "ENVY_chmod_root", self.container, "chmod a+wrx /root", False
+            "ENVY_chmod_root",
+            "Setting up home environment",
+            self.container,
+            "chmod a+wrx /root",
+            False,
         )
         self.steps[chmod_step.name] = chmod_step
 
@@ -52,10 +58,13 @@ class Builder:
         for m in ENVY_CONFIG.get_setup_steps():
             # Create step
             name = m["name"]
+            label = m["label"]
             if m["type"] == "script":
-                step = ScriptSetupStep(name, self.container, m["run"], m["as_user"])
+                step = ScriptSetupStep(
+                    name, label, self.container, m["run"], m["as_user"]
+                )
             elif m["type"] == "remote":
-                step = RemoteSetupStep(name, self.container, m["url"])
+                step = RemoteSetupStep(name, label, self.container, m["url"])
 
             # Create and register triggers
             if m["triggers"] == "always":
@@ -81,10 +90,11 @@ class Builder:
     def __run_triggered(self):
         for step in self.steps.values():
             if step.should_trigger():
-                print("Running build step {}".format(step.name))
+                self.printer.start_step(step.label)
                 step.run()
+                self.printer.end_step()
             else:
-                print("Skipping build step {}".format(step.name))
+                self.printer.skip_step(step.label)
 
     def __persist_triggers(self):
         for step in self.steps.values():
