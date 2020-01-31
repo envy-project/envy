@@ -16,6 +16,11 @@ class ContainerNotFound(Exception):
 class ContainerNotRunning(Exception):
     pass
 
+class ContainerError(Exception):
+    def __init__(self, code):
+        super(ContainerError, self).__init__(code)
+        self.code = code
+
 
 class ContainerManager:
     ### Static Container Creation ###
@@ -125,7 +130,8 @@ class ContainerManager:
             self.docker_client, self.container_id, command_inside_project
         )
 
-        return exit_code
+        if exit_code != 0:
+            raise ContainerError(exit_code)
 
     def ensure_running(self):
         """ Ensures that the container is running

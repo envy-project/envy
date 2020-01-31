@@ -4,7 +4,7 @@ import argparse
 
 from envy.lib.config import ENVY_CONFIG, ENVY_CURRENT_RELATIVE_PATH
 from envy.lib.state import ENVY_STATE, create_directory_if_not_exists
-from envy.lib.docker_manager import ComposeManager, DockerManager
+from envy.lib.docker_manager import ComposeManager, ContainerError, DockerManager
 from envy.lib.setup_step import Builder
 from envy.lib.io import StepPrinter
 
@@ -17,115 +17,132 @@ STATUS_MSG_CONTAINER_READY = "ENVy environment is ready!"
 
 def up_command(_args: argparse.Namespace, _unknow_args: [str]):
     printer = StepPrinter()
-    printer.start_step("Finding Docker Container")
-    docker_manager = DockerManager()
-    printer.end_step()
-
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
-
-    if not ENVY_STATE.get_container_id():
-        printer.start_step("No environment detected - Creating ENVy environment")
-        docker_manager.create_container()
-        create_directory_if_not_exists()
+    try:
+        printer.start_step("Finding Docker Container")
+        docker_manager = DockerManager()
         printer.end_step()
 
-    printer.start_step("Starting Container")
-    container = docker_manager.ensure_container()
-    container.ensure_running()
-    printer.end_step()
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
 
-    printer.start_step("Performing Build Modules")
-    step_builder = Builder(container)
-    step_builder.build()
-    printer.end_step()
+        if not ENVY_STATE.get_container_id():
+            printer.start_step("No environment detected - Creating ENVy environment")
+            docker_manager.create_container()
+            create_directory_if_not_exists()
+            printer.end_step()
 
-    compose_path = ENVY_CONFIG.get_services_compose_path()
-    if compose_path:
-        printer.start_step("Starting Sidecar Services")
-        ComposeManager(compose_path).up()
+        printer.start_step("Starting Container")
+        container = docker_manager.ensure_container()
+        container.ensure_running()
         printer.end_step()
+
+        printer.start_step("Performing Build Modules")
+        step_builder = Builder(container)
+        step_builder.build()
+        printer.end_step()
+
+        compose_path = ENVY_CONFIG.get_services_compose_path()
+        if compose_path:
+            printer.start_step("Starting Sidecar Services")
+            ComposeManager(compose_path).up()
+            printer.end_step()
+    except ContainerError as err:
+        printer.error(err.code)
 
 
 def shell_command(_args: argparse.Namespace, _unknown_args: [str]):
-    docker_manager = DockerManager()
+    try:
+        docker_manager = DockerManager()
 
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
 
-    container = docker_manager.get_container()
+        container = docker_manager.get_container()
 
-    if not container:
-        print(STATUS_MSG_NO_CONTAINER)
-        return
+        if not container:
+            print(STATUS_MSG_NO_CONTAINER)
+            return
 
-    if not container.is_running():
-        print(STATUS_MSG_CONTAINER_STOPPED)
-        return
+        if not container.is_running():
+            print(STATUS_MSG_CONTAINER_STOPPED)
+            return
 
-    container.exec("/bin/bash", as_user=True, relpath=str(ENVY_CURRENT_RELATIVE_PATH))
+        container.exec("/bin/bash", as_user=True, relpath=str(ENVY_CURRENT_RELATIVE_PATH))
+    except ContainerError as err:
+        print("Shell exited with error code {}".format(err.code))
 
 
 def down_command(_args: argparse.Namespace, _unknown_args: [str]):
     printer = StepPrinter()
-    printer.start_step("Connecting to Docker")
-    docker_manager = DockerManager()
-    printer.end_step()
-
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
-
-    printer.start_step("Finding Docker Container")
-    container = docker_manager.get_container()
-    printer.end_step()
-
-    if container:
-        printer.start_step("Stopping Docker Container")
-        container.ensure_stopped()
+    try:
+        printer.start_step("Connecting to Docker")
+        docker_manager = DockerManager()
         printer.end_step()
 
-    compose_path = ENVY_CONFIG.get_services_compose_path()
-    if compose_path:
-        printer.start_step("Stopping Sidecar Services")
-        ComposeManager(compose_path).down()
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
+
+        printer.start_step("Finding Docker Container")
+        container = docker_manager.get_container()
         printer.end_step()
+
+        if container:
+            printer.start_step("Stopping Docker Container")
+            container.ensure_stopped()
+            printer.end_step()
+
+        compose_path = ENVY_CONFIG.get_services_compose_path()
+        if compose_path:
+            printer.start_step("Stopping Sidecar Services")
+            ComposeManager(compose_path).down()
+            printer.end_step()
+    except ContainerError as err:
+        printer.error(err.code)
 
 
 def nuke_command(_args: argparse.Namespace, _unknown_args: [str]):
-    docker_manager = DockerManager()
+    printer = StepPrinter()
+    try:
+        printer.start_step("Destroying ENVy Environment")
+        docker_manager = DockerManager()
 
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
 
-    docker_manager.nuke()
-    ENVY_STATE.nuke()
+        docker_manager.nuke()
+        ENVY_STATE.nuke()
 
-    compose_path = ENVY_CONFIG.get_services_compose_path()
-    if compose_path:
-        ComposeManager(compose_path).nuke()
+        compose_path = ENVY_CONFIG.get_services_compose_path()
+        if compose_path:
+            ComposeManager(compose_path).nuke()
 
-    print("ENVy environment destroyed")
+        printer.end_step()
+    except ContainerError as err:
+        printer.error(err.code)
 
 
 def status_command(_args: argparse.Namespace, _unknown_args: [str]):
-    docker_manager = DockerManager()
+    try:
+        docker_manager = DockerManager()
 
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
 
-    container = docker_manager.get_container()
+        container = docker_manager.get_container()
 
-    if not container:
-        print(STATUS_MSG_NO_CONTAINER)
-    elif not container.is_running():
-        print(STATUS_MSG_CONTAINER_STOPPED)
-    else:
-        print("ENVy environment is running!")
+        if not container:
+            print(STATUS_MSG_NO_CONTAINER)
+        elif not container.is_running():
+            print(STATUS_MSG_CONTAINER_STOPPED)
+        else:
+            print("ENVy environment is running!")
+    except ContainerError as err:
+        print("Status exited with error code {}".format(err.code))
 
 
 def run_script(
@@ -134,25 +151,28 @@ def run_script(
     script: str,
     disable_relpath: bool = False,
 ):
-    docker_manager = DockerManager()
+    try:
+        docker_manager = DockerManager()
 
-    if not docker_manager.connection_ok():
-        docker_manager.print_connection_err()
-        return
+        if not docker_manager.connection_ok():
+            docker_manager.print_connection_err()
+            return
 
-    container = docker_manager.get_container()
+        container = docker_manager.get_container()
 
-    if not container:
-        print(STATUS_MSG_NO_CONTAINER)
-    elif not container.is_running():
-        print(STATUS_MSG_CONTAINER_STOPPED)
-    else:
-        command = "{} {}".format(script, " ".join(unknown_args))
+        if not container:
+            print(STATUS_MSG_NO_CONTAINER)
+        elif not container.is_running():
+            print(STATUS_MSG_CONTAINER_STOPPED)
+        else:
+            command = "{} {}".format(script, " ".join(unknown_args))
 
-        cdto = ENVY_CURRENT_RELATIVE_PATH
-        if disable_relpath:
-            cdto = None
-        container.exec(command, True, cdto)
+            cdto = ENVY_CURRENT_RELATIVE_PATH
+            if disable_relpath:
+                cdto = None
+            container.exec(command, True, cdto)
+    except ContainerError as err:
+        print("Script exited with error code {}".format(err.code))
 
 
 def build_custom_command_parser(subparsers, name: str, info: {}):
