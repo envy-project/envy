@@ -46,7 +46,8 @@ class ContainerManager:
             image_id,
             "tail -f /dev/null",
             name=ContainerManager.__generate_container_name(),
-            network_mode="host",
+            network=ENVY_CONFIG.get_network(),
+            network_mode=ENVY_CONFIG.get_network_mode(),
             mounts=[
                 Mount(
                     ENVY_CONFIG.get_project_mount_path(),

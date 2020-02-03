@@ -142,6 +142,7 @@ _SCHEMA = Schema(
             }
         ],
         Optional("services", default={}): {Optional("compose-file"): str},
+        Optional("network", default=None): str,
     }
 )
 
