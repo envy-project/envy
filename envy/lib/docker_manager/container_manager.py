@@ -1,11 +1,11 @@
 from hashlib import md5
 import os
+import subprocess
 from pathlib import Path
 from docker.types import Mount
 from docker import DockerClient
 from docker.models.containers import Container
 import dockerpty
-import subprocess
 
 from envy.lib.config import ENVY_PROJECT_DIR, ENVY_CONFIG
 
@@ -49,19 +49,21 @@ class ContainerManager:
                 ENVY_CONFIG.get_project_mount_path(),
                 str(ENVY_PROJECT_DIR),
                 type="bind",
-                ),
+            ),
             Mount("/var/run/docker.sock", "/var/run/docker.sock", type="bind"),
         ]
 
         if ENVY_CONFIG.should_x_forward():
             try:
-                subprocess.run(["xhost", "+", "localhost"], check=True, capture_output=True)
-            except:
-                print("WARNING: failed to allow x-forwarding from localhost, but x-forwarding is enabled. X applications will likely fail.")
+                subprocess.run(
+                    ["xhost", "+", "localhost"], check=True, capture_output=True
+                )
+            except subprocess.SubprocessError:
+                print(
+                    "WARNING: failed to allow x-forwarding from localhost, but x-forwarding is enabled. X applications will likely fail."
+                )
 
-            mounts += [Mount(
-                "/tmp/.X11-unix", "/tmp/.X11-unix", type="bind"
-            )]
+            mounts += [Mount("/tmp/.X11-unix", "/tmp/.X11-unix", type="bind")]
             # TODO $DISPLAY must be special cased for mac. On Linux it should just be ":0"
             # TODO mac users need to enable the "Allow connections from network clients" setting in xQuartz. document this.
             environment["DISPLAY"] = "host.docker.internal:0"
