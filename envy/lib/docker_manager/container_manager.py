@@ -65,7 +65,6 @@ class ContainerManager:
                 )
 
             mounts += [Mount("/tmp/.X11-unix", "/tmp/.X11-unix", type="bind")]
-            # TODO mac users need to enable the "Allow connections from network clients" setting in xQuartz. document this.
             if platform.system() == "Darwin":
                 environment["DISPLAY"] = "host.docker.internal:0"
             else:
