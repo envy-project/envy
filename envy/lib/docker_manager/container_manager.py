@@ -5,6 +5,7 @@ from docker.types import Mount
 from docker import DockerClient
 from docker.models.containers import Container
 import dockerpty
+import subprocess
 
 from envy.lib.config import ENVY_PROJECT_DIR, ENVY_CONFIG
 
@@ -42,20 +43,37 @@ class ContainerManager:
         """
         print("Creating ENVy container")
 
+        environment = {}
+        mounts = [
+            Mount(
+                ENVY_CONFIG.get_project_mount_path(),
+                str(ENVY_PROJECT_DIR),
+                type="bind",
+                ),
+            Mount("/var/run/docker.sock", "/var/run/docker.sock", type="bind"),
+        ]
+
+        if ENVY_CONFIG.should_x_forward():
+            try:
+                subprocess.run(["xhost", "+", "localhost"], check=True, capture_output=True)
+            except:
+                print("WARNING: failed to allow x-forwarding from localhost, but x-forwarding is enabled. X applications will likely fail.")
+
+            mounts += [Mount(
+                "/tmp/.X11-unix", "/tmp/.X11-unix", type="bind"
+            )]
+            # TODO $DISPLAY must be special cased for mac. On Linux it should just be ":0"
+            # TODO mac users need to enable the "Allow connections from network clients" setting in xQuartz. document this.
+            environment["DISPLAY"] = "host.docker.internal:0"
+
         container = docker_client.containers.create(
             image_id,
             "tail -f /dev/null",
             name=ContainerManager.__generate_container_name(),
             network=ENVY_CONFIG.get_network(),
             network_mode=ENVY_CONFIG.get_network_mode(),
-            mounts=[
-                Mount(
-                    ENVY_CONFIG.get_project_mount_path(),
-                    str(ENVY_PROJECT_DIR),
-                    type="bind",
-                ),
-                Mount("/var/run/docker.sock", "/var/run/docker.sock", type="bind"),
-            ],
+            mounts=mounts,
+            environment=environment,
         )
 
         return ContainerManager(docker_client, container.id)
