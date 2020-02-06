@@ -1,3 +1,7 @@
+import os
+import pwd
+import grp
+
 from collections import OrderedDict
 
 from envy.lib.docker_manager import ContainerManager
@@ -44,12 +48,32 @@ class Builder:
         self.steps[self.system_package_step.name] = self.system_package_step
 
     def __create_initial_setup_steps(self):
-        # Hack to get some things to play nice with /root being home folder.
+        # Set up this user's username and groups inside the container.
+        uid = os.getuid()
+        gid = os.getgid()
+        groups = os.getgroups()
+        uname = pwd.getpwuid(uid).pw_name
+
+        group_info = [grp.getgrgid(group) for group in groups]
+        group_creation = [
+            "echo '{}:x:{}:{}' >> /etc/group".format(
+                group.gr_name, str(group.gr_gid), uname if group.gr_gid != gid else ""
+            )
+            for group in group_info
+        ]
+
         chmod_step = ScriptSetupStep(
             "ENVY_chmod_root",
             "Setting up home environment",
             self.container,
-            "chmod a+wrx /root",
+            [
+                "chmod a+wrx /root",
+                "chmod a+wrx /",
+                "echo '{}:x:{}:{}::/root:/bin/bash' >> /etc/passwd".format(
+                    uname, str(uid), str(gid)
+                ),
+            ]
+            + group_creation,
             False,
         )
         self.steps[chmod_step.name] = chmod_step
