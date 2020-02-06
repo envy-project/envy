@@ -1,5 +1,6 @@
 from hashlib import md5
 import os
+import platform
 import subprocess
 from pathlib import Path
 from docker.types import Mount
@@ -64,9 +65,11 @@ class ContainerManager:
                 )
 
             mounts += [Mount("/tmp/.X11-unix", "/tmp/.X11-unix", type="bind")]
-            # TODO $DISPLAY must be special cased for mac. On Linux it should just be ":0"
             # TODO mac users need to enable the "Allow connections from network clients" setting in xQuartz. document this.
-            environment["DISPLAY"] = "host.docker.internal:0"
+            if platform.system() == "Darwin":
+                environment["DISPLAY"] = "host.docker.internal:0"
+            else:
+                environment["DISPLAY"] = ":0"
 
         container = docker_client.containers.create(
             image_id,
