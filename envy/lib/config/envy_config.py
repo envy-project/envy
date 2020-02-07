@@ -52,5 +52,11 @@ class EnvyConfig:
     def get_actions(self) -> [{}]:
         return self.data["actions"]
 
+    def get_network_mode(self) -> Optional[str]:
+        return None if self.data["network"] else "host"
+
+    def get_network(self) -> Optional[str]:
+        return self.data.get("network")
+
     def get_services_compose_path(self) -> Optional[str]:
         return self.data["services"].get("compose-file")
