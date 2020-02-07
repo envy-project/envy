@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 
 import argparse
+import os
+import platform
+import subprocess
 
 from envy.lib.config import ENVY_CONFIG, ENVY_CURRENT_RELATIVE_PATH
 from envy.lib.state import ENVY_STATE, create_directory_if_not_exists
@@ -36,6 +39,25 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
         container = docker_manager.ensure_container()
         container.ensure_running()
         printer.end_step()
+
+        if ENVY_CONFIG.should_x_forward():
+            printer.start_step("Setting up X forwarding")
+
+            if platform.system() == "Darwin":
+                x_error = "WARNING: failed to set up X forwarding. X applications will likely fail. Is XQuartz installed and running?"
+            else:
+                x_error = "WARNING: failed to set up X forwarding. X applications will likely fail. Do you have an X server running?"
+
+            if os.path.exists("/tmp/.X11-unix/X0"):
+                try:
+                    subprocess.run(
+                        ["xhost", "+", "localhost"], check=True, capture_output=True
+                    )
+                except subprocess.SubprocessError:
+                    print(x_error)
+            else:
+                print(x_error)
+            printer.end_step()
 
         step_builder = Builder(container, printer)
         step_builder.build()

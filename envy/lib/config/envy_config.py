@@ -60,3 +60,6 @@ class EnvyConfig:
 
     def get_services_compose_path(self) -> Optional[str]:
         return self.data["services"].get("compose-file")
+
+    def should_x_forward(self) -> bool:
+        return self.data["environment"]["x-forward"]

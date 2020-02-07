@@ -6,8 +6,11 @@ _DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu:18.04", "package-manager": "apt"}
 
 _DEFAULT_PROJECT_DIR = "/project"
 
+_DEFAULT_X_FORWARD = False
+
 _DEFAULT_ENVIRONMENT = {
     "base": _DEFAULT_ENVIRONMENT_BASE,
+    "x-forward": _DEFAULT_X_FORWARD,
     "project-dir": _DEFAULT_PROJECT_DIR,
     "system-packages": [],
     "setup-steps": [],
@@ -100,6 +103,7 @@ _SCHEMA = Schema(
                     "image": str,
                     Optional("package-manager"): str,
                 },
+                Optional("x-forward", default=_DEFAULT_X_FORWARD): bool,
                 Optional("project-dir", default=_DEFAULT_PROJECT_DIR): And(
                     str, __validate_project_dir
                 ),

@@ -1,5 +1,6 @@
 from hashlib import md5
 import os
+import platform
 from pathlib import Path
 from docker.types import Mount
 from docker import DockerClient
@@ -42,20 +43,31 @@ class ContainerManager:
         """
         print("Creating ENVy container")
 
+        environment = {}
+        mounts = [
+            Mount(
+                ENVY_CONFIG.get_project_mount_path(),
+                str(ENVY_PROJECT_DIR),
+                type="bind",
+            ),
+            Mount("/var/run/docker.sock", "/var/run/docker.sock", type="bind"),
+        ]
+
+        if ENVY_CONFIG.should_x_forward():
+            mounts += [Mount("/tmp/.X11-unix", "/tmp/.X11-unix", type="bind")]
+            if platform.system() == "Darwin":
+                environment["DISPLAY"] = "host.docker.internal:0"
+            else:
+                environment["DISPLAY"] = ":0"
+
         container = docker_client.containers.create(
             image_id,
             "tail -f /dev/null",
             name=ContainerManager.__generate_container_name(),
             network=ENVY_CONFIG.get_network(),
             network_mode=ENVY_CONFIG.get_network_mode(),
-            mounts=[
-                Mount(
-                    ENVY_CONFIG.get_project_mount_path(),
-                    str(ENVY_PROJECT_DIR),
-                    type="bind",
-                ),
-                Mount("/var/run/docker.sock", "/var/run/docker.sock", type="bind"),
-            ],
+            mounts=mounts,
+            environment=environment,
         )
 
         return ContainerManager(docker_client, container.id)
