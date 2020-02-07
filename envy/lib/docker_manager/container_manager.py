@@ -1,7 +1,6 @@
 from hashlib import md5
 import os
 import platform
-import subprocess
 from pathlib import Path
 from docker.types import Mount
 from docker import DockerClient
@@ -55,15 +54,6 @@ class ContainerManager:
         ]
 
         if ENVY_CONFIG.should_x_forward():
-            try:
-                subprocess.run(
-                    ["xhost", "+", "localhost"], check=True, capture_output=True
-                )
-            except subprocess.SubprocessError:
-                print(
-                    "WARNING: failed to allow x-forwarding from localhost, but x-forwarding is enabled. X applications will likely fail."
-                )
-
             mounts += [Mount("/tmp/.X11-unix", "/tmp/.X11-unix", type="bind")]
             if platform.system() == "Darwin":
                 environment["DISPLAY"] = "host.docker.internal:0"
