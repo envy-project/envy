@@ -53,7 +53,7 @@ class EnvyConfig:
         return self.data["actions"]
 
     def get_network_mode(self) -> Optional[str]:
-        return "host" if self.data["network"] else None
+        return None if self.data["network"] else "host"
 
     def get_network(self) -> Optional[str]:
         return self.data.get("network")
