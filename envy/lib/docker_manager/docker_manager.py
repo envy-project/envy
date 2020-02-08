@@ -64,7 +64,11 @@ class DockerManager:
         if self.get_container():
             raise ContainerExists()
 
-        # TODO: This likely should be done smarter: give the user a message if we need to download, etc
+        try:
+            self.docker_client.images.get(ENVY_CONFIG.get_base_image())
+        except docker.errors.ImageNotFound:
+            print("Pulling base image, this may take a while...")
+
         self.docker_client.images.pull(ENVY_CONFIG.get_base_image())
 
         container_manager = ContainerManager.create(
