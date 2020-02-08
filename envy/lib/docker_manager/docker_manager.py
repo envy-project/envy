@@ -64,16 +64,18 @@ class DockerManager:
         if self.get_container():
             raise ContainerExists()
 
+        image = ENVY_CONFIG.get_base_image()
+        if ":" not in image:
+            image += ":latest"
+
         try:
-            self.docker_client.images.get(ENVY_CONFIG.get_base_image())
+            self.docker_client.images.get(image)
         except docker.errors.ImageNotFound:
             print("Pulling base image, this may take a while...")
 
-        self.docker_client.images.pull(ENVY_CONFIG.get_base_image())
+        self.docker_client.images.pull(image)
 
-        container_manager = ContainerManager.create(
-            self.docker_client, ENVY_CONFIG.get_base_image()
-        )
+        container_manager = ContainerManager.create(self.docker_client, image)
 
         ENVY_STATE.set_container_id(container_manager.container_id)
 
