@@ -146,7 +146,13 @@ _SCHEMA = Schema(
             }
         ],
         Optional("services", default={}): {Optional("compose-file"): str},
-        Optional("network", default=None): str,
+        Optional("network", default={}): Or(
+            "host",
+            {
+                Optional("name", default=None): str,
+                Optional("ports", default=None): {Or(int, str): Or(int, str)},
+            },
+        ),
     }
 )
 
