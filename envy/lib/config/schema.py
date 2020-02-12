@@ -1,7 +1,8 @@
 import sys
 
-from schema import Schema, SchemaError, Optional, And, Or, Use
 from typing import Union
+
+from schema import Schema, SchemaError, Optional, And, Or, Use
 
 _DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu:18.04", "package-manager": "apt"}
 
