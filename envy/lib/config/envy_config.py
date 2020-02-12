@@ -61,8 +61,12 @@ class EnvyConfig:
     def get_network(self) -> Optional[str]:
         return None if self._is_host_network() else self.data["network"].get("name")
 
-    def get_ports(self) -> Optional[Dict[str, str]]:
-        return None if self._is_host_network() else self.data["network"].get("ports")
+    # returns dictionary of port mappings of {container port, host port}
+    def get_ports(self) -> Optional[Dict[str, Optional[str]]]:
+        if self._is_host_network() or not self.data["network"].get("ports"):
+            return None
+
+        return {p[0]: p[1] for p in self.data["network"].get("ports")}
 
     def get_services_compose_path(self) -> Optional[str]:
         return self.data["services"].get("compose-file")
