@@ -66,6 +66,7 @@ class ContainerManager:
             name=ContainerManager.__generate_container_name(),
             network=ENVY_CONFIG.get_network(),
             network_mode=ENVY_CONFIG.get_network_mode(),
+            ports=ENVY_CONFIG.get_ports(),
             mounts=mounts,
             environment=environment,
         )

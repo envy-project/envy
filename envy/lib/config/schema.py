@@ -1,5 +1,7 @@
 import sys
 
+from typing import Union
+
 from schema import Schema, SchemaError, Optional, And, Or, Use
 
 _DEFAULT_ENVIRONMENT_BASE = {"image": "ubuntu:18.04", "package-manager": "apt"}
@@ -21,6 +23,15 @@ _STEP_TYPES = ["script", "remote"]
 _SIMPLE_TRIGGERS = ["always"]
 
 _DEFAULT_TRIGGERS = {"system-packages": [], "files": [], "steps": []}
+
+
+def __validate_port_binding(ports: Union[str, int]) -> (str, Optional(str)):
+    pair = str(ports).split(":")
+    if len(pair) > 2:
+        raise SyntaxError("Multiple ':' found: port binding must contain up to 1")
+    if len(pair) == 1:
+        return (pair[0], None)
+    return (pair[0], pair[1])
 
 
 def __validate_project_dir(project_dir: str) -> bool:
@@ -146,7 +157,13 @@ _SCHEMA = Schema(
             }
         ],
         Optional("services", default={}): {Optional("compose-file"): str},
-        Optional("network", default=None): str,
+        Optional("network", default={}): Or(
+            "host",
+            {
+                Optional("name", default=None): str,
+                Optional("ports", default=None): [Use(__validate_port_binding)],
+            },
+        ),
     }
 )
 

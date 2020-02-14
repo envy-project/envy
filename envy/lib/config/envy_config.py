@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 import yaml
 
@@ -52,11 +52,21 @@ class EnvyConfig:
     def get_actions(self) -> [{}]:
         return self.data["actions"]
 
+    def _is_host_network(self) -> bool:
+        return self.data["network"] == "host"
+
     def get_network_mode(self) -> Optional[str]:
-        return None if self.data["network"] else "host"
+        return "host" if self._is_host_network() else None
 
     def get_network(self) -> Optional[str]:
-        return self.data.get("network")
+        return None if self._is_host_network() else self.data["network"].get("name")
+
+    # returns dictionary of port mappings of {container port, host port}
+    def get_ports(self) -> Optional[Dict[str, Optional[str]]]:
+        if self._is_host_network() or not self.data["network"].get("ports"):
+            return None
+
+        return {p[0]: p[1] for p in self.data["network"].get("ports")}
 
     def get_services_compose_path(self) -> Optional[str]:
         return self.data["services"].get("compose-file")
