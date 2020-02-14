@@ -29,6 +29,12 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
             docker_manager.print_connection_err()
             return
 
+        compose_path = ENVY_CONFIG.get_services_compose_path()
+        if compose_path:
+            printer.start_step("Starting Sidecar Services")
+            ComposeManager(compose_path).up()
+            printer.end_step()
+
         if not ENVY_STATE.get_container_id():
             printer.start_step("Creating ENVy environment")
             docker_manager.create_container()
@@ -62,11 +68,6 @@ def up_command(_args: argparse.Namespace, _unknow_args: [str]):
         step_builder = Builder(container, printer)
         step_builder.build()
 
-        compose_path = ENVY_CONFIG.get_services_compose_path()
-        if compose_path:
-            printer.start_step("Starting Sidecar Services")
-            ComposeManager(compose_path).up()
-            printer.end_step()
     except ContainerError as err:
         printer.error(err.code)
 
