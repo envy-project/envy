@@ -134,7 +134,7 @@ class ContainerManager:
         if as_user:
             groups = ",".join(str(x) for x in os.getgroups())
             userspec = str(os.getuid()) + ":" + str(os.getgid())
-            command_inside_project = "/usr/sbin/chroot --groups={} --userspec={} / /bin/bash --noprofile -c 'cd {}; {}'".format(
+            command_inside_project = "/usr/sbin/chroot --groups={} --userspec={} / /bin/bash -c 'export HOME=/uhome; cd {}; {}'".format(
                 groups,
                 userspec,
                 ENVY_CONFIG.get_project_mount_path(),
