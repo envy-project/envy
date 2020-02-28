@@ -69,9 +69,11 @@ class Builder:
             [
                 "chmod a+wrx /root",
                 "chmod a+wrx /",
-                "echo '{}:x:{}:{}::/root:/bin/bash' >> /etc/passwd".format(
+                "echo '{}:x:{}:{}::/uhome:/bin/bash' >> /etc/passwd".format(
                     uname, str(uid), str(gid)
                 ),
+                "mkdir /uhome",
+                "chown {}:{} /uhome".format(str(uid), str(gid)),
             ]
             + group_creation,
             False,
